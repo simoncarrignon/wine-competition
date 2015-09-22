@@ -1,0 +1,10 @@
+
+# Don't version the actual config file
+config.xml
+
+mpiCode
+logs
+data
+
+.csv
+*.o
