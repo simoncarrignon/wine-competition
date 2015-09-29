@@ -2,12 +2,13 @@ import os
 from string import Template
 
 from .experiment import AggregateExperiment
-from .helper import HOMEPATH, mkdirp, write_code, load_file, DISTRIBUTION_BASE_DIR
+from .helper import mkdirp, write_code, load_file, DISTRIBUTION_BASE_DIR
 
 
-MAIL = 'guillem.frances@upf.edu'
-SIMULPAST_DIR = os.path.abspath(HOMEPATH + '/projects/simulpast')
-SIMULATOR = '${SIMULPAST_DIR}/model-based-social-simulations/src/simulation.bin'
+#SIMULPAST_DIR = os.path.abspath(HOMEPATH + '/projects/simulpast')
+MAIL = "montanier.jeanmarc@gmail.com"
+SIMULPAST_DIR = os.path.dirname(os.path.realpath(__file__))
+SIMULATOR = '${SIMULPAST_DIR}/../../src/simulation.bin'
 
 
 class Taskgen(object):

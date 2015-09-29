@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#!/usr/bin/python3.4 
 # -*- coding: utf-8 -*-
 import argparse
 
@@ -17,14 +17,18 @@ def main():
 
     for width in range(200, 1000, 200):
         agent = MDPAgentConfiguration(population=10, horizon=10, width=width)
-        exp.add_single(SingleExperiment(timesteps=100, runs=5,
+        exp.add_single(SingleExperiment(timesteps=100, 
+                                        consumption=0.9,
+                                        agent_reproduction=1,
+                                        agent_position="",
                                         simulation_map='r25_i0',
                                         label="width_{}".format(width),
+                                        runs=5,
                                         agents=[agent]))
 
     exp.bootstrap()
 
-    t = SGETaskgen(exp)
+    t = SequentialTaskgen(exp)
     t.run()
 
 

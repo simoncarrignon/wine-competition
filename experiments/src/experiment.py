@@ -7,7 +7,7 @@ from .helper import HOMEPATH, mkdirp, save_file, load_file, DISTRIBUTION_BASE_DI
 
 
 MAPS_DIR = DISTRIBUTION_BASE_DIR + '/maps'  # This is the place were the benchmark maps reside.
-RESULTS_DIR = os.path.abspath(HOMEPATH + '/projects/simulpast/experiments')
+RESULTS_DIR = os.path.abspath(HOMEPATH + '/work/results/decisionMaking')
 
 CONTROLLER_CONFIG = dict(
     mdp='<controller type= "MDP" population="${population}" horizon="${horizon}" width="${width}" '
