@@ -9,8 +9,8 @@ import sys
 from src.helper import get_subdirs, mkdirp
 
 HOMEPATH = os.path.expanduser("~")
-EXPERIMENTS_BASE_DIR = HOMEPATH + '/projects/simulpast/experiments'
-ANALYSIS_BIN = HOMEPATH + '/projects/simulpast/model-based-social-simulations/analysis/analysis.bin'
+EXPERIMENTS_BASE_DIR = HOMEPATH + '/work/results/decisionMaking'
+ANALYSIS_BIN = HOMEPATH + '/repos/epnet-dev/150922-ComparisonDecisionMaking/analysis/analysis.bin'
 
 
 def iterate(experiment_dir, csv):
@@ -31,6 +31,7 @@ def generate_csv(file, output_dir):
 
     command = "{} {} {}".format(ANALYSIS_BIN, file, output_dir)
     sys.stdout.flush()  # Flush the output to avoid it mixing with the subprocess call.
+    print(command)
     output = subprocess.call(command.split())
     if not output == 0:
         raise RuntimeError('Error executing command "{0}"'.format(command))

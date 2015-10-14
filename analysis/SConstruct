@@ -1,7 +1,7 @@
 
 import os
 
-pandora_path = os.getenv('PANDORAPATH', '/usr/local/pandora')
+pandora_path = os.getenv('PANDORAPATH', '/home/jm/repos/pandora')
 grass64_path = os.getenv('GRASS64_PATH', '/usr/lib/grass64')
 
 vars = Variables('custom.py')
