@@ -6,12 +6,13 @@ import pdb
 
 import cellular
 reload(cellular)
-import qlearn_mod_random as qlearn # to use the alternative exploration method
-#import qlearn # to use standard exploration method
+#import qlearn_mod_random as qlearn # to use the alternative exploration method
+import qlearn # to use standard exploration method
 reload(qlearn)
 
 directions = 8
 
+#TODO change the shape of the neighborhood
 lookdist = 2
 lookcells = []
 for i in range(-lookdist,lookdist+1):
@@ -44,27 +45,14 @@ class Cell(cellular.Cell):
             self.wall = False
 
 
-class Cat(cellular.Agent):
-    cell = None
-    score = 0
-    colour = 'orange'
-
-    def update(self):
-        cell = self.cell
-        if cell != mouse.cell:
-            self.goTowards(mouse.cell)
-            while cell == self.cell:
-                self.goInDirection(random.randrange(directions))
-
-
-class Cheese(cellular.Agent):
+class Food(cellular.Agent):
     colour = 'yellow'
 
     def update(self):
         pass
 
 
-class Mouse(cellular.Agent):
+class Gatherer(cellular.Agent):
     colour = 'gray'
 
     def __init__(self):
@@ -80,20 +68,10 @@ class Mouse(cellular.Agent):
         state = self.calcState()
         reward = -1
 
-        if self.cell == cat.cell:
-            self.eaten += 1
-            reward = -100
-            if self.lastState is not None:
-                self.ai.learn(self.lastState, self.lastAction, reward, state)
-            self.lastState = None
-
-            self.cell = pickRandomLocation()
-            return
-
-        if self.cell == cheese.cell:
+        if self.cell == food.cell:
             self.fed += 1
             reward = 50
-            cheese.cell = pickRandomLocation()
+            food.cell = pickRandomLocation()
 
         if self.lastState is not None:
             self.ai.learn(self.lastState, self.lastAction, reward, state)
@@ -107,48 +85,34 @@ class Mouse(cellular.Agent):
 
     def calcState(self):
         def cellvalue(cell):
-            if cat.cell is not None and (cell.x == cat.cell.x and
-                                         cell.y == cat.cell.y):
-                return 3
-            elif cheese.cell is not None and (cell.x == cheese.cell.x and
-                                              cell.y == cheese.cell.y):
+            if food.cell is not None and (cell.x == food.cell.x and
+                                              cell.y == food.cell.y):
                 return 2
             else:
                 return 1 if cell.wall else 0
 
+        #TODO for now torroidal world. to change
         return tuple([cellvalue(self.world.getWrappedCell(self.cell.x + j, self.cell.y + i))
                       for i,j in lookcells])
 
-mouse = Mouse()
-cat = Cat()
-cheese = Cheese()
+gatherer = Gatherer()
+food = Food()
 
 world = cellular.World(Cell, directions=directions, filename='waco.txt')
 world.age = 0
 
-world.addAgent(cheese, cell=pickRandomLocation())
-world.addAgent(cat)
-world.addAgent(mouse)
+world.addAgent(food, cell=pickRandomLocation())
+world.addAgent(gatherer)
 
-epsilonx = (0,100000)
-epsilony = (0.1,0)
-epsilonm = (epsilony[1] - epsilony[0]) / (epsilonx[1] - epsilonx[0])
-
-endAge = world.age + 150000
+endAge = 150000
 
 while world.age < endAge:
     world.update()
 
-    '''if world.age % 100 == 0:
-        mouse.ai.epsilon = (epsilony[0] if world.age < epsilonx[0] else
-                            epsilony[1] if world.age > epsilonx[1] else
-                            epsilonm*(world.age - epsilonx[0]) + epsilony[0])'''
-
     if world.age % 10000 == 0:
-        print "{:d}, e: {:0.2f}, W: {:d}, L: {:d}"\
-            .format(world.age, mouse.ai.epsilon, mouse.fed, mouse.eaten)
-        mouse.eaten = 0
-        mouse.fed = 0
+        print "{:d}, e: {:0.2f}, F: {:d}"\
+            .format(world.age, gatherer.ai.epsilon, gatherer.fed)
+        gatherer.fed = 0
 
 world.display.activate(size=30)
 world.display.delay = 1

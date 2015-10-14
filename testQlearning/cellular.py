@@ -5,6 +5,7 @@ neighbourSynonyms = ('neighbours', 'neighbors', 'neighbour', 'neighbor')
 
 
 class Cell:
+    pass
     def __getattr__(self, key):
         if key in neighbourSynonyms:
             pts = [self.world.getPointInDirection(
