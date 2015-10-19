@@ -15,7 +15,8 @@ CONTROLLER_CONFIG = dict(
     random='<controller type= "random" population="${population}"/>',
     lazy='<controller type= "lazy" population="${population}" alpha="${alpha}"/>',
     greedy='<controller type= "greedy" population="${population}" />',
-    motionless='<controller type= "motionless" population="${population}"/>'
+    motionless='<controller type= "motionless" population="${population}"/>',
+    learning='<controller type= "learning" population="${population}" alpha="${alpha}" epsilon="${epsilon}" gama="${gama}" '
 )
 
 
@@ -44,6 +45,16 @@ class MDPAgentConfiguration(AgentConfiguration):
 
     def get_type(self):
         return 'mdp'
+
+class LearningConfiguration(AgentConfiguration):
+    def __init__(self, population, epsilon, alpha, gama):
+        super().__init__(population)
+        self.epsilon = epsilon
+        self.alpha = alpha
+        self.gama = gama
+
+    def get_type(self):
+        return 'learning'
 
 
 class RandomAgentConfiguration(AgentConfiguration):
