@@ -12,7 +12,7 @@
 namespace Model
 {
 
-const std::vector<std::string> EnvironmentConfig::ALLOWED_CONTROLLERS = {"MDP", "random", "motionless", "lazy", "greedy", "rule"};
+const std::vector<std::string> EnvironmentConfig::ALLOWED_CONTROLLERS = {"MDP", "random", "motionless", "lazy", "greedy", "rule", "learning"};
 
 EnvironmentConfig::EnvironmentConfig(const std::string& filename) : 
 	Engine::Config(filename),
@@ -74,7 +74,11 @@ void EnvironmentConfig::loadSingleControllerConfig(TiXmlElement* element) {
 		config.explorationBonus = -1 * abs(config.explorationBonus); // the exploration bonus needs to be negative for cost-based (as opposed to reward-based) MDPs.
  	} else if (config.type == "lazy") {
 		config.alpha = getParamFloatFromElem(element, "alpha");
-	}
+	} else if (config.type == "learning") {
+		config.alpha = getParamUnsignedFromElem(element, "alpha");
+		config.epsilon = getParamUnsignedFromElem(element, "epsilon");
+		config.gama = getParamFloatFromElem(element, "gama");
+ 	}
 	
  	_controllers.push_back(config);
 }
