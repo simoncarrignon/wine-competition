@@ -1,8 +1,10 @@
 import random
+import sys
+import math
 
 
 class QLearn:
-    def __init__(self, actions, epsilon=0.05, alpha=0.2, gamma=0.9):
+    def __init__(self, actions, epsilon=2, alpha=0.2, gamma=0.9):
         self.q = {}
 
         self.epsilon = epsilon
@@ -21,20 +23,39 @@ class QLearn:
         else:
             self.q[(state, action)] = oldv + self.alpha * (value - oldv)
 
-    def chooseAction(self, state):
-        if random.random() < self.epsilon:
-            action = random.choice(self.actions)
-        else:
-            q = [self.getQ(state, a) for a in self.actions]
-            maxQ = max(q)
-            count = q.count(maxQ)
-            if count > 1:
-                best = [i for i in range(len(self.actions)) if q[i] == maxQ]
-                i = random.choice(best)
-            else:
-                i = q.index(maxQ)
+    def chooseAction(self, state, return_q=False):
+        q = [self.getQ(state, a) for a in self.actions]
+        #print(q)
+        q = [math.pow(self.epsilon,self.getQ(state, a)) for a in self.actions]
+        #print(q)
+        sumQ = sum(q)
+        if sumQ > 0:
+            sum2 = 0.0
+            probas = {}
+            for a in self.actions:
+                sum2 += math.pow(self.epsilon,self.getQ(state, a))
+                probas[a] = sum2/sumQ
 
-            action = self.actions[i]
+            #print(probas)
+
+
+            r = random.random()
+            for a in self.actions:
+                #print(r)
+                action = a
+                if (r < probas[a]):
+                    break
+        else:
+            action = random.choice(self.actions)
+
+
+        if return_q: # if they want it, give it!
+            return action, q
+
+        #print(self.actions)
+        #print(action)
+        #print("#####")
+        #sys.exit()
         return action
 
     def learn(self, state1, action1, reward, state2):

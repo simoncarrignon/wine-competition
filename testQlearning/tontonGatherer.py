@@ -4,10 +4,13 @@ import shelve
 
 import pdb
 
+import sys
+
 import cellular
 reload(cellular)
 #import qlearn_mod_random as qlearn # to use the alternative exploration method
-import qlearn # to use standard exploration method
+#import qlearn # to use standard exploration method
+import qlearn_explo as qlearn # to use the alternative exploration method
 reload(qlearn)
 
 directions = 8
@@ -58,30 +61,33 @@ class Gatherer(cellular.Agent):
     def __init__(self):
         self.ai = None
         self.ai = qlearn.QLearn(actions=range(directions),
-                                alpha=0.1, gamma=0.9, epsilon=0.1)
+                                #alpha=0.1, gamma=0.9, epsilon=0.1)
+                                alpha=0.1, gamma=0.9, epsilon=2)
         self.eaten = 0
         self.fed = 0
         self.lastState = None
         self.lastAction = None
 
     def update(self):
+        reward = -10
+
+        state = self.calcState() #the state is basically the view of the world from the agent's perspective
+        self.lastState = state
+
+        action = self.ai.chooseAction(state)
+        self.goInDirection(action)
         state = self.calcState()
-        reward = -1
 
         if self.cell == food.cell:
             self.fed += 1
-            reward = 50
+            reward = 100
             food.cell = pickRandomLocation()
 
         if self.lastState is not None:
-            self.ai.learn(self.lastState, self.lastAction, reward, state)
+            self.ai.learn(self.lastState, action, reward, state)
 
-        state = self.calcState()
-        action = self.ai.chooseAction(state)
-        self.lastState = state
         self.lastAction = action
 
-        self.goInDirection(action)
 
     def calcState(self):
         def cellvalue(cell):
@@ -91,7 +97,6 @@ class Gatherer(cellular.Agent):
             else:
                 return 1 if cell.wall else 0
 
-        #TODO for now torroidal world. to change
         return tuple([cellvalue(self.world.getWrappedCell(self.cell.x + j, self.cell.y + i))
                       for i,j in lookcells])
 
@@ -104,7 +109,7 @@ world.age = 0
 world.addAgent(food, cell=pickRandomLocation())
 world.addAgent(gatherer)
 
-endAge = 150000
+endAge = 300000
 
 while world.age < endAge:
     world.update()
@@ -113,6 +118,29 @@ while world.age < endAge:
         print "{:d}, e: {:0.2f}, F: {:d}"\
             .format(world.age, gatherer.ai.epsilon, gatherer.fed)
         gatherer.fed = 0
+
+#q = gatherer.ai.q
+#state=[0,0,0,0,0,0,0,0,0,0,0,0]
+#ended = False
+#while ended == False:
+#    for dim in range(12):
+#        if state[dim] == 2:
+#            state[dim] = 0
+#        else:
+#            state[dim] += 1
+#            break
+#
+#    ended = True
+#    for dim in range(12):
+#        if state[dim] != 2:
+#            ended = False
+#            break
+#    
+#    for action in range(8):
+#        stateActionTuple = (tuple(state),action)
+#        if stateActionTuple in q:
+#            print(state)
+#            print(str(action) + "," + str(q[stateActionTuple]))
 
 world.display.activate(size=30)
 world.display.delay = 1
