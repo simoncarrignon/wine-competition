@@ -17,7 +17,7 @@ public:
 	RuleBasedController() {}
 	virtual ~RuleBasedController() {}
 	
-	virtual Engine::Action* selectAction(const ModelAgent& agent) const {
+	virtual Engine::Action* selectAction(ModelAgent& agent) {
 		//TODO - IMPLEMENT
 		assert(false);
 		return MoveAction::createRandomAction(agent);

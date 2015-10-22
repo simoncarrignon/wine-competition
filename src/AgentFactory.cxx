@@ -24,8 +24,8 @@ void AgentFactory::registerControllerType(const ControllerConfig& config) {
 }
 	
 	
-ModelAgent* AgentFactory::createAgent(unsigned id, Environment* world, const std::string& type) const { return new ModelAgent(id, world, getController(type)); }
-ModelAgent* AgentFactory::createAgent(const std::string id, Environment* world, const std::string& type) const { return new ModelAgent(id, world, getController(type)); }
+ModelAgent* AgentFactory::createAgent(unsigned id, Environment* world, const std::string& type) { return new ModelAgent(id, world, getController(type)); }
+ModelAgent* AgentFactory::createAgent(const std::string id, Environment* world, const std::string& type) { return new ModelAgent(id, world, getController(type)); }
 	
 	
 void AgentFactory::createController(const ControllerConfig& config) {
@@ -54,7 +54,7 @@ void AgentFactory::createController(const ControllerConfig& config) {
 }
 
 
-AgentController::cptr AgentFactory::getController(const std::string& type) const {
+AgentController::aptr AgentFactory::getController(const std::string& type) {
 	auto controllerIt = controllers.find(type);
 	if (controllerIt != controllers.end()) {
 		return controllerIt->second;

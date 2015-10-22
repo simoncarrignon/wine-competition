@@ -35,7 +35,7 @@ public:
 		return _alpha * agent.getResourceRaster().getValue(position) >= agent.dailyResourceConsumption();
 	}
 	
-	virtual Engine::Action* selectAction(const ModelAgent& agent) const {
+	virtual Engine::Action* selectAction(ModelAgent& agent) {
 
 		const Engine::Point2D<int>& current = agent.getPosition();
 		const Engine::World* world = agent.getWorld();

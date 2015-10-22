@@ -18,12 +18,13 @@ public:
 	GreedyController() {}
 	virtual ~GreedyController() {}
 	
-	virtual Engine::Action* selectAction(const ModelAgent& agent) const {
+	virtual Engine::Action* selectAction(ModelAgent& agent) {
 		
+		ModelAgent const& agent_const = agent;
 		const auto& current = agent.getPosition();
 		const Engine::World* world = agent.getWorld();
 		assert(world);
-		const Engine::DynamicRaster& raster = agent.getResourceRaster();
+		const Engine::DynamicRaster& raster = agent_const.getResourceRaster();
 		
 		// We start by assuming that the best option is the no-move action
 		unsigned best_idx = 0,

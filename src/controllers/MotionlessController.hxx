@@ -17,7 +17,7 @@ public:
 	MotionlessController() {}
 	virtual ~MotionlessController() {}
 	
-	virtual Engine::Action* selectAction(const ModelAgent& agent) const {
+	virtual Engine::Action* selectAction(ModelAgent& agent) {
 		return new MoveAction(MoveAction::DIRECTION_STAY);
 	}
 	

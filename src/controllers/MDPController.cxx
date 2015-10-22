@@ -13,7 +13,7 @@ MDPController::MDPController(const ControllerConfig& config)
 	{}
 
 
-Engine::Action* MDPController::selectAction(const ModelAgent& agent) const {
+Engine::Action* MDPController::selectAction(ModelAgent& agent) {
 	// The object with all the MDP information and methods.
 	// Note that we need to store this object here, since the policy object object keeps only a const reference.
 	MDPProblem problem(_config, agent);

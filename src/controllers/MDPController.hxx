@@ -33,7 +33,7 @@ public:
 	virtual std::string getType() const { return "mdp"; }
 	
 	//! In order to select the appropriate action, we setup an MDPProblem and "solve it" using UCT.
-	virtual Engine::Action* selectAction(const ModelAgent& agent) const;
+	virtual Engine::Action* selectAction(ModelAgent& agent) ;
 };
 
 } // namespaces

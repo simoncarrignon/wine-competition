@@ -18,6 +18,7 @@ class AgentController
 {
 public:
 	typedef std::shared_ptr<const AgentController> cptr;
+	typedef std::shared_ptr<AgentController> aptr;
 	
 	AgentController() {}
 	virtual ~AgentController() {};
@@ -25,7 +26,7 @@ public:
 	virtual std::string getType() const = 0;
 	
 	//! Select the action to be performed by the agent according to the particular logic of the controller.
-	virtual Engine::Action* selectAction(const ModelAgent& agent) const = 0;
+	virtual Engine::Action* selectAction(ModelAgent& agent) = 0;
 };
 
 }

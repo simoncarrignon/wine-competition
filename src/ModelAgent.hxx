@@ -17,14 +17,12 @@ class MDPRaster; class Environment;
 class ModelAgent : public Engine::Agent
 {
 private:
-	const AgentController::cptr _controller;
+	AgentController::aptr _controller;
 	int _resources; // MpiBasicAttribute
 	int _numChildren; // MpiBasicAttribute
 
 	Engine::Action* getLastSelectedAction();
 	
-	//! Helper to return the agent's world's resource raster, non-const version
-	Engine::DynamicRaster& getResourceRaster();
 	
 	//! Reproduce the agent into two agents.
 	void reproduceAgent();
@@ -37,13 +35,13 @@ private:
 	
 public:
 	
-	ModelAgent(unsigned id, Environment* world, const AgentController::cptr controller);
-	ModelAgent(const std::string& id, Environment* world, const AgentController::cptr controller);
+	ModelAgent(unsigned id, Environment* world, AgentController::aptr controller);
+	ModelAgent(const std::string& id, Environment* world, AgentController::aptr controller);
 	
 	virtual ~ModelAgent();
 	
 	//! We overload the type detection routine to make use of the controller type
-	virtual std::string getType() const;
+	virtual std::string getType() ;
 
     // The decision-making process occurs inside this method
 	void selectActions();
@@ -87,13 +85,16 @@ public:
 	int getResources() const { return _resources; }
 	
 	//! Accessor for the controller
-	const AgentController::cptr getController() const { return _controller; }
+	AgentController::aptr getController() { return _controller; }
 	
 	//! Prints a representation of the state to the given stream. Redefined from the parent class.
-	virtual std::ostream& print(std::ostream& os) const;
-	
-	//! Helper to return the agent's world's resource raster.
+	virtual std::ostream& print(std::ostream& os) ;
+
+	//! Helper to return the agent's world's resource raster
 	const Engine::DynamicRaster& getResourceRaster() const;
+	
+	//! Helper to return the agent's world's resource raster, non-const version
+	Engine::DynamicRaster& getResourceRaster();
 	
 	void registerAttributes();
 	void serialize();

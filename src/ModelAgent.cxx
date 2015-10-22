@@ -10,11 +10,11 @@
 namespace Model
 {
 
-ModelAgent::ModelAgent(unsigned id, Environment* world, const AgentController::cptr controller)
+ModelAgent::ModelAgent(unsigned id, Environment* world, AgentController::aptr controller)
 	: ModelAgent("ModelAgent_" + std::to_string(id), world, controller)
 {}
 
-ModelAgent::ModelAgent(const std::string& id, Environment* world, const AgentController::cptr controller)
+ModelAgent::ModelAgent(const std::string& id, Environment* world, AgentController::aptr controller)
 	: Agent(id), _controller(controller), _numChildren(0)
 {
 	setWorld(world);
@@ -26,7 +26,7 @@ ModelAgent::ModelAgent(const std::string& id, Environment* world, const AgentCon
 
 ModelAgent::~ModelAgent() {}
 
-std::string ModelAgent::getType() const {
+std::string ModelAgent::getType() {
 	return getController()->getType();
 }
 
@@ -124,7 +124,7 @@ Engine::DynamicRaster& ModelAgent::getResourceRaster() {
 	return getWorld()->getDynamicRaster(Environment::RESOURCE_RASTER_IDX);
 }
 
-std::ostream& ModelAgent::print(std::ostream& os) const {
+std::ostream& ModelAgent::print(std::ostream& os) {
 	os << getId();
 	
 	os << " [" << getController()->getType() << "]";

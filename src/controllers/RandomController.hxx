@@ -18,7 +18,7 @@ public:
 	RandomController() {}
 	virtual ~RandomController() {}
 	
-	virtual Engine::Action* selectAction(const ModelAgent& agent) const {
+	virtual Engine::Action* selectAction(ModelAgent& agent) {
 		return MoveAction::createRandomAction(agent);
 	}
 	
