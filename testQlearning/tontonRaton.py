@@ -10,7 +10,8 @@ import cellular
 reload(cellular)
 #import qlearn_mod_random as qlearn # to use the alternative exploration method
 #import qlearn # to use standard exploration method
-import qlearn_explo as qlearn # to use the alternative exploration method
+#import qlearn_explo as qlearn # to use the alternative exploration method
+import sarsa as qlearn # to use the alternative exploration method
 reload(qlearn)
 
 directions = 8
@@ -60,13 +61,18 @@ class Gatherer(cellular.Agent):
 
     def __init__(self):
         self.ai = None
-        self.ai = qlearn.QLearn(actions=range(directions),
-                                #alpha=0.1, gamma=0.9, epsilon=0.1)
-                                alpha=0.1, gamma=0.9, epsilon=2)
         self.eaten = 0
         self.fed = 0
         self.lastState = None
         self.lastAction = None
+
+    def initAI(self):
+        self.states = self.calcAllStates()
+        self.ai = qlearn.QLearn(actions=range(directions),states=self.states,
+                                #alpha=0.1, gamma=0.9, epsilon=0.1)
+                                #alpha=0.1, gamma=0.9, epsilon=2)
+                                alpha=0.01, gamma=0.9, lambdaParam=0.9)
+
 
     def update(self):
         reward = -10
@@ -82,11 +88,23 @@ class Gatherer(cellular.Agent):
             self.fed += 1
             reward = 100
             food.cell = pickRandomLocation()
+            self.ai.reset()
 
         if self.lastState is not None:
             self.ai.learn(self.lastState, action, reward, state)
 
         self.lastAction = action
+
+    def calcAllStates(self):
+        allStates = []
+        for x in range(self.world.width):
+            for y in range(self.world.height):
+                self.cell.x = x
+                self.cell.y = y
+                state = self.calcState()
+                if not state in allStates:
+                    allStates.append(state)
+        return allStates
 
 
     def calcState(self):
@@ -108,6 +126,7 @@ world.age = 0
 
 world.addAgent(food, cell=pickRandomLocation())
 world.addAgent(gatherer)
+gatherer.initAI()
 
 endAge = 300000
 
