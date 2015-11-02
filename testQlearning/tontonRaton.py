@@ -14,14 +14,14 @@ reload(cellular)
 import sarsa as qlearn # to use the alternative exploration method
 reload(qlearn)
 
-directions = 8
+directions = 4
 
-#TODO change the shape of the neighborhood
-lookdist = 2
+lookdist = 1
 lookcells = []
 for i in range(-lookdist,lookdist+1):
     for j in range(-lookdist,lookdist+1):
-        if (abs(i) + abs(j) <= lookdist) and (i != 0 or j != 0):
+        #if (abs(i) + abs(j) <= lookdist) and (i != 0 or j != 0):
+        if (i != 0 or j != 0):
             lookcells.append((i,j))
 
 def pickRandomLocation():
@@ -65,9 +65,14 @@ class Gatherer(cellular.Agent):
         self.fed = 0
         self.lastState = None
         self.lastAction = None
+        self.stepsToGoal = 0
 
     def initAI(self):
         self.states = self.calcAllStates()
+        print(len(self.states))
+        #for state in self.states:
+        #    self.printState(state)
+        #    print("###")
         self.ai = qlearn.QLearn(actions=range(directions),states=self.states,
                                 #alpha=0.1, gamma=0.9, epsilon=0.1)
                                 #alpha=0.1, gamma=0.9, epsilon=2)
@@ -75,7 +80,7 @@ class Gatherer(cellular.Agent):
 
 
     def update(self):
-        reward = -10
+        reward = 0
 
         state = self.calcState() #the state is basically the view of the world from the agent's perspective
         self.lastState = state
@@ -86,28 +91,56 @@ class Gatherer(cellular.Agent):
 
         if self.cell == food.cell:
             self.fed += 1
-            reward = 100
-            food.cell = pickRandomLocation()
-            self.ai.reset()
+            reward = 1
+        else:
+            self.stepsToGoal += 1
 
         if self.lastState is not None:
             self.ai.learn(self.lastState, action, reward, state)
 
+        if self.cell == food.cell:
+            self.cell = pickRandomLocation()
+            #self.printQValues()
+            self.ai.reset()
+            self.stepsToGoal = 0
+
         self.lastAction = action
+
+    def printQValues(self):
+#        for x in range(self.world.width):
+#            for y in range(self.world.height):
+#                tmpCell = world.getCell(x,y)
+#                if tmpCell.wall == False:
+#                    state = self.calcState(tmpCell)
+#                    for 
+        cellsCoord = [(9,2),(9,3),(9,4)]
+        for coord in cellsCoord:
+            x = coord[0]
+            y = coord[1]
+            tmpCell = world.getCell(x,y)
+            state = self.calcState(tmpCell)
+            print(str(x)+","+str(y))
+            print(state)
+            for action in range(directions):
+                q = self.ai.q[(state,action)]
+                trace = self.ai.trace[(state,action)]
+                print(str(action) + " : " + str(q) + " , " + str(trace))
 
     def calcAllStates(self):
         allStates = []
         for x in range(self.world.width):
             for y in range(self.world.height):
-                self.cell.x = x
-                self.cell.y = y
-                state = self.calcState()
-                if not state in allStates:
-                    allStates.append(state)
+                tmpCell = world.getCell(x,y)
+                if tmpCell.wall == False:
+                    state = self.calcState(tmpCell)
+                    if not state in allStates:
+                        allStates.append(state)
         return allStates
 
 
-    def calcState(self):
+    def calcState(self,cell=None):
+        if cell == None:
+            cell = self.cell
         def cellvalue(cell):
             if food.cell is not None and (cell.x == food.cell.x and
                                               cell.y == food.cell.y):
@@ -115,23 +148,52 @@ class Gatherer(cellular.Agent):
             else:
                 return 1 if cell.wall else 0
 
-        return tuple([cellvalue(self.world.getWrappedCell(self.cell.x + j, self.cell.y + i))
+        return tuple([cellvalue(self.world.getWrappedCell(cell.x + j, cell.y + i))
                       for i,j in lookcells])
+
+    def printState(self,state):
+        if len(state) == 8:
+            toPrint = ""
+            for printId in range(len(state)):
+                if printId == 3:
+                    toPrint += str(state[printId]) + " X "
+                else:
+                    toPrint += str(state[printId]) + " "
+
+                if printId == 2 or printId == 4 or printId == 7:
+                    print(toPrint)
+                    toPrint = ""
+        elif len(state) == 4:
+            toPrint = ""
+            for printId in range(len(state)):
+                if printId == 0 or printId == 3:
+                    toPrint += " " + str(state[printId]) 
+                else:
+                    toPrint += str(state[printId]) + " "
+                if printId == 0 or printId == 2 or printId == 3:
+                    print(toPrint)
+                    toPrint = ""
 
 gatherer = Gatherer()
 food = Food()
 
-world = cellular.World(Cell, directions=directions, filename='waco.txt')
+world = cellular.World(Cell, directions=directions, filename='sutton.txt')
 world.age = 0
 
-world.addAgent(food, cell=pickRandomLocation())
-world.addAgent(gatherer)
+world.addAgent(food, cell=world.getCell(9,1))
+world.addAgent(gatherer, cell=pickRandomLocation())
 gatherer.initAI()
 
 endAge = 300000
+#endAge = 2000
 
+print("start")
 while world.age < endAge:
     world.update()
+
+    if world.age % 10000 == 0:
+        if gatherer.ai.epsilon >= 0.0:
+            gatherer.ai.epsilon -= 0.01
 
     if world.age % 10000 == 0:
         print "{:d}, e: {:0.2f}, F: {:d}"\
@@ -160,6 +222,8 @@ while world.age < endAge:
 #        if stateActionTuple in q:
 #            print(state)
 #            print(str(action) + "," + str(q[stateActionTuple]))
+
+gatherer.printQValues()
 
 world.display.activate(size=30)
 world.display.delay = 1

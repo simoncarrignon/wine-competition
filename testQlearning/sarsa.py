@@ -4,7 +4,7 @@ import math
 
 
 class QLearn:
-    def __init__(self, actions, states, lambdaParam=0.9, alpha=0.01, gamma=0.9,epsilon=0.1):
+    def __init__(self, actions, states, lambdaParam=0.9, alpha=0.01, gamma=0.9,epsilon=0.2):
         self.q = {}
 
         self.lambdaParam = lambdaParam
@@ -22,34 +22,35 @@ class QLearn:
         self.trace = {}
         for state in self.states:
             for action in self.actions:
-                self.trace[(state,action)] = 0
+                self.trace[(state,action)] = 0.0
 
     def getQ(self, state, action):
         return self.q.get((state, action), 0.0)
-        # return self.q.get((state, action), 1.0)
 
     def learnQ(self, state, action, reward, value):
         self.trace[(state,action)] = 1.0
 
         for stateIt in self.states:
             for actionIt in self.actions:
-                if stateIt != state and actionIt != action:
-                    self.trace[(state,action)] =  self.gamma * self.lambdaParam * self.trace[(state,action)]
+                if stateIt != state or actionIt != action:
+                    self.trace[(stateIt,actionIt)] =  self.gamma * self.lambdaParam * self.trace[(stateIt,actionIt)]
 
-        oldv = self.q.get((state, action), None)
-        if oldv is None:
-            self.q[(state, action)] = reward
-        else:
-            self.q[(state, action)] = oldv + self.alpha * (value - oldv) * self.trace[(state,action)]
-
+        prevQ = self.q
+        for stateIt in self.states:
+            for actionIt in self.actions:
+                oldv = prevQ.get((stateIt, actionIt), None)
+                if oldv is None:
+                    self.q[(stateIt, actionIt)] = reward
+                else:
+                    self.q[(stateIt, actionIt)] = oldv + self.alpha * (value - oldv) * self.trace[(stateIt,actionIt)]
 
     def chooseAction(self,state):
         if self.choice == "explo":
-            return self.exploChoice(self,state)
+            return self.exploChoice(state)
         elif self.choice == "greedy":
-            return self.greedyChoice(self,state)
+            return self.greedyChoice(state)
         else:
-            return self.greedyChoice(self,state)
+            return self.greedyChoice(state)
 
     def greedyChoice(self, state, return_q=False):
         if random.random() < self.epsilon:
