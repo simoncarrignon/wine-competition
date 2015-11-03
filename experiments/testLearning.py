@@ -17,7 +17,7 @@ def main():
 
     for width in range(200, 201, 1):
         agent = LearningConfiguration(population=10, epsilon = 2 , alpha = 0.2 , gama = 0.9)
-        exp.add_single(SingleExperiment(timesteps=10, 
+        exp.add_single(SingleExperiment(timesteps=100, 
                                         consumption=0.9,
                                         agent_reproduction=1,
                                         agent_position="",

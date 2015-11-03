@@ -16,7 +16,7 @@ CONTROLLER_CONFIG = dict(
     lazy='<controller type= "lazy" population="${population}" alpha="${alpha}"/>',
     greedy='<controller type= "greedy" population="${population}" />',
     motionless='<controller type= "motionless" population="${population}"/>',
-    learning='<controller type= "learning" population="${population}" alpha="${alpha}" epsilon="${epsilon}" gama="${gama}" '
+    learning='<controller type= "learning" population="${population}" alpha="${alpha}" epsilon="${epsilon}" gama="${gama}" />'
 )
 
 
@@ -48,7 +48,7 @@ class MDPAgentConfiguration(AgentConfiguration):
 
 class LearningConfiguration(AgentConfiguration):
     def __init__(self, population, epsilon, alpha, gama):
-        super().__init__(population)
+        super(LearningConfiguration,self).__init__(population)
         self.epsilon = epsilon
         self.alpha = alpha
         self.gama = gama

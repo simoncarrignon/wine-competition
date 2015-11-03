@@ -75,8 +75,8 @@ void EnvironmentConfig::loadSingleControllerConfig(TiXmlElement* element) {
  	} else if (config.type == "lazy") {
 		config.alpha = getParamFloatFromElem(element, "alpha");
 	} else if (config.type == "learning") {
-		config.alpha = getParamUnsignedFromElem(element, "alpha");
-		config.epsilon = getParamUnsignedFromElem(element, "epsilon");
+		config.alpha = getParamFloatFromElem(element, "alpha");
+		config.epsilon = getParamFloatFromElem(element, "epsilon");
 		config.gama = getParamFloatFromElem(element, "gama");
  	}
 	
