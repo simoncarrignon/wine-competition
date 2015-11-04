@@ -24,8 +24,27 @@ void AgentFactory::registerControllerType(const ControllerConfig& config) {
 }
 	
 	
-ModelAgent* AgentFactory::createAgent(unsigned id, Environment* world, const std::string& type) { return new ModelAgent(id, world, getController(type)); }
-ModelAgent* AgentFactory::createAgent(const std::string id, Environment* world, const std::string& type) { return new ModelAgent(id, world, getController(type)); }
+ModelAgent* AgentFactory::createAgent(unsigned id, Environment* world, const std::string& type, const ControllerConfig& config) { 
+ 	if (type == "learning") {
+		std::shared_ptr<AgentController> controller;
+		controller = std::make_shared<LearningController>(config);
+		return new ModelAgent(id,world,controller);
+	}
+	else {
+		return new ModelAgent(id, world, getController(type)); 
+	}
+}
+
+ModelAgent* AgentFactory::createAgent(const std::string id, Environment* world, const std::string& type, const ControllerConfig& config) { 
+ 	if (type == "learning") {
+		std::shared_ptr<AgentController> controller;
+		controller = std::make_shared<LearningController>(config);
+		return new ModelAgent(id,world,controller);
+	}
+	else {
+		return new ModelAgent(id, world, getController(type)); 
+	}
+}
 	
 	
 void AgentFactory::createController(const ControllerConfig& config) {
@@ -44,8 +63,8 @@ void AgentFactory::createController(const ControllerConfig& config) {
 		controller = std::make_shared<GreedyController>();
  	} else if (type == "rule") {
 		controller = std::make_shared<RuleBasedController>();
- 	} else if (type == "learning") {
-		controller = std::make_shared<LearningController>(config);
+	} else if (type == "learning") {
+		controller = std::make_shared<LearningController>(config); //registered for compatibility issue but not used
  	} else {
  		throw Engine::Exception("Unknown controller type"); // Should never get here!
  	}

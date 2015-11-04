@@ -51,11 +51,14 @@ public:
 	}
 
 	//! The execution of the action simply changes the location of the agent
-	//! (possibily to the same cell, if it is a no-move action
+	//! (possibily to the same cell, if it is a no-move action or if the action
+	//! is not valid)
 	virtual void execute(Engine::Agent& agent) {
 		PDEBUG("actions", agent << " - " << *this);
-		assert(isValidFor(agent));
-		agent.setPosition(getResultingPosition(agent.getPosition()));
+		if(isValidFor(agent))
+		{
+			agent.setPosition(getResultingPosition(agent.getPosition()));
+		}
 	}
 	
 	//! Return the new position that results from applying the current action to the given `position`

@@ -7,6 +7,8 @@
 #include <MDPRaster.hxx>
 #include <utils/logging.hxx>
 
+#include "controllers/LearningController.hxx"
+
 namespace Model
 {
 
@@ -67,7 +69,16 @@ void ModelAgent::reproduceAgent() {
 	
 	Environment* world = static_cast<Environment *>(getWorld());
 	
-	ModelAgent* child = new ModelAgent(id, world, getController()); // We reuse the same controller
+	ModelAgent* child;
+	if(getType() == "learning") {
+		std::shared_ptr<LearningController> dadController = std::dynamic_pointer_cast<LearningController>(getController());
+		std::shared_ptr<AgentController> childController;
+		childController = std::make_shared<LearningController>(dadController->getConfig());
+		child = new ModelAgent(id, world, childController);
+	}
+	else {
+		child = new ModelAgent(id, world, getController()); // We reuse the same controller
+	}
 	child->setPosition(getPosition()); // The new agent starts at the same position
 	
 	world->addAgent(child); // Add the agent to the world

@@ -35,7 +35,7 @@ void Environment::createAgents() {
 		for(unsigned i = 0; i < config.getPopulation(); i++)
 		{
 			if((id % getNumTasks()) == (unsigned) getId()) {
-				ModelAgent* agent = agentFactory.createAgent(id, this, config.getType());
+				ModelAgent* agent = agentFactory.createAgent(id, this, config.getType(), config);
 				addAgent(agent);
 				
 				// Set the agent initial position

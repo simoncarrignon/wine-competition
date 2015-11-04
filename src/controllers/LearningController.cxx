@@ -11,12 +11,12 @@ LearningController::LearningController(const ControllerConfig& config)
 		directions = MoveAction::DIRECTIONS;
 	}
 
-int LearningController::chooseAction(std::vector<double> state)
+int LearningController::chooseAction(std::vector<int> state)
 {
 	int action = 0;
 	if(qValues.size() == 0)
 	{
-		action = Engine::GeneralState::statistics().getUniformDistValue(0, MoveAction::DIRECTIONS.size());
+		action = Engine::GeneralState::statistics().getUniformDistValue(0, MoveAction::DIRECTIONS.size()-1);
 	}
 	else
 	{
@@ -37,17 +37,26 @@ int LearningController::chooseAction(std::vector<double> state)
 				bestAction.push_back(i);
 			}
 		}
-		int idAction = Engine::GeneralState::statistics().getUniformDistValue(0, bestAction.size());
+		int idAction = Engine::GeneralState::statistics().getUniformDistValue(0, bestAction.size()-1);
 		action = bestAction[idAction];
 	}
 	return action;
 }
 
 
-void LearningController::updateQValues(std::vector<double> previousState, int action, double reward, std::vector<double> state)
+void LearningController::updateQValues(std::vector<int> previousState, int action, double reward, std::vector<int> state)
 {
+	for (unsigned int i = 0 ; i < previousState.size() ; i ++ ) std::cout << previousState[i] << " ";
+	std::cout << std::endl;
+	std::cout << "action : " << action << std::endl;
+	std::cout << "reward : " << reward << std::endl;
+	for (unsigned int i = 0 ; i < state.size() ; i ++ ) std::cout << state[i] << " ";
+	std::cout << std::endl;
+	std::cout << "size : "  << qValues.size() << std::endl;
+
 	if (exists(previousState,action) == true)
 	{
+		std::cout << "already exists" << std::endl;
 		double maxFutureQ = getQvalue(state,0);
 		for(unsigned int i = 1 ; i < directions.size() ; i++)
 		{
@@ -63,11 +72,12 @@ void LearningController::updateQValues(std::vector<double> previousState, int ac
 	}
 	else
 	{
+		std::cout << "unknown" << std::endl;
 		setQvalue(previousState,action,reward);
 	}
 }
 
-double LearningController::getQvalue(std::vector<double> state, int action)
+double LearningController::getQvalue(std::vector<int> state, int action)
 {
 	auto key = std::make_pair(state,action);
 	auto it = qValues.find(key);
@@ -81,7 +91,7 @@ double LearningController::getQvalue(std::vector<double> state, int action)
 	}
 }
 
-bool LearningController::exists(std::vector<double> state, int action)
+bool LearningController::exists(std::vector<int> state, int action)
 {
 	auto key = std::make_pair(state,action);
 	auto it = qValues.find(key);
@@ -95,24 +105,26 @@ bool LearningController::exists(std::vector<double> state, int action)
 	}
 }
 
-void LearningController::setQvalue(std::vector<double> state, int action, double value)
+void LearningController::setQvalue(std::vector<int> state, int action, double value)
 {
-	auto key = std::make_pair(state,action);
-	auto it = qValues.find(key);
+	std::pair<std::vector<int>,int> key = std::make_pair(state,action);
+	std::map<std::pair<std::vector<int>,int>,double>::iterator it = qValues.find(key);
 	if( it == qValues.end())
 	{
-		qValues.insert(std::pair<std::pair<std::vector<double>,int>,double>(key,value));
+		std::cout << "insert" << std::endl;
+		qValues.insert(std::pair<std::pair<std::vector<int>,int>,double>(key,value));
 	}
 	else
 	{
+		std::cout << "update" << std::endl;
 		qValues.at(key) = value;
 	}
 }
 
 
-std::vector<double> LearningController::computeState(Engine::Point2D<int>& position, Engine::World* world, Engine::DynamicRaster& raster)
+std::vector<int> LearningController::computeState(Engine::Point2D<int>& position, Engine::World* world, Engine::DynamicRaster& raster)
 {
-	std::vector<double> state;
+	std::vector<int> state;
 	unsigned int num_directions = MoveAction::DIRECTIONS.size();
 
 	for (unsigned int direction = 0 ; direction < num_directions ; direction ++ ) 
@@ -136,8 +148,9 @@ Engine::Action* LearningController::selectAction(ModelAgent& agent)
 
 	int reward = raster.getValue(current);
 
-	std::vector<double> state = computeState(current,world,raster);
+	std::vector<int> state = computeState(current,world,raster);
 
+	std::cout << "update agent " << agent.getId() << std::endl;
 	updateQValues(previousState,previousAction,reward,state);
 
 	int action = chooseAction(state);
