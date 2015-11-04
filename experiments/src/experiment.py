@@ -146,9 +146,10 @@ class AggregateExperiment(object):
 
     def __init__(self, args):
         self.timestamp = time.strftime("%Y%m%d_%H%M")
-        self.timeout = args.timeout
-        self.mem = args.mem
-        self.name = '.'.join([args.name, str(args.timeout) + 'sec', '{}GB'.format(args.mem), self.timestamp])
+        #self.timeout = args.timeout
+        #self.mem = args.mem
+        #self.name = '.'.join([args.name, str(args.timeout) + 'sec', '{}GB'.format(args.mem), self.timestamp])
+        self.name = '.'.join([args.name, self.timestamp])
         self.directory = RESULTS_DIR + '/' + self.name
         self.singles = []
 
