@@ -46,17 +46,8 @@ int LearningController::chooseAction(std::vector<int> state)
 
 void LearningController::updateQValues(std::vector<int> previousState, int action, double reward, std::vector<int> state)
 {
-	for (unsigned int i = 0 ; i < previousState.size() ; i ++ ) std::cout << previousState[i] << " ";
-	std::cout << std::endl;
-	std::cout << "action : " << action << std::endl;
-	std::cout << "reward : " << reward << std::endl;
-	for (unsigned int i = 0 ; i < state.size() ; i ++ ) std::cout << state[i] << " ";
-	std::cout << std::endl;
-	std::cout << "size : "  << qValues.size() << std::endl;
-
 	if (exists(previousState,action) == true)
 	{
-		std::cout << "already exists" << std::endl;
 		double maxFutureQ = getQvalue(state,0);
 		for(unsigned int i = 1 ; i < directions.size() ; i++)
 		{
@@ -72,7 +63,6 @@ void LearningController::updateQValues(std::vector<int> previousState, int actio
 	}
 	else
 	{
-		std::cout << "unknown" << std::endl;
 		setQvalue(previousState,action,reward);
 	}
 }
@@ -111,12 +101,10 @@ void LearningController::setQvalue(std::vector<int> state, int action, double va
 	std::map<std::pair<std::vector<int>,int>,double>::iterator it = qValues.find(key);
 	if( it == qValues.end())
 	{
-		std::cout << "insert" << std::endl;
 		qValues.insert(std::pair<std::pair<std::vector<int>,int>,double>(key,value));
 	}
 	else
 	{
-		std::cout << "update" << std::endl;
 		qValues.at(key) = value;
 	}
 }
@@ -150,7 +138,6 @@ Engine::Action* LearningController::selectAction(ModelAgent& agent)
 
 	std::vector<int> state = computeState(current,world,raster);
 
-	std::cout << "update agent " << agent.getId() << std::endl;
 	updateQValues(previousState,previousAction,reward,state);
 
 	int action = chooseAction(state);
