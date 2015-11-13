@@ -34,7 +34,8 @@ int main(int argc, char *argv[])
 	
 // 	const std::vector<std::string> TYPES = {"all", "mdp", "random"};
 // 	const std::vector<std::string> TYPES = {"mdp", "random"};
-	const std::vector<std::string> TYPES = {"mdp", "random", "lazy", "greedy"};
+//	const std::vector<std::string> TYPES = {"mdp", "random", "lazy", "greedy"};
+	const std::vector<std::string> TYPES = {"learning"};
 	for (const auto& type:TYPES) {
 		std::string output(std::string(argv[2]) + "/agent-" + type + ".csv");
 		agentResults.apply(simRecord, output, type);
