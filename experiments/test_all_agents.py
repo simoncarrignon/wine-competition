@@ -1,11 +1,13 @@
-#! /usr/bin/env python
+#!/usr/bin/python3.4 
 # -*- coding: utf-8 -*-
+import argparse
 
 import itertools
 from src.helper import make_filename
-from src.experiment import AggregateExperiment, MDPAgentConfiguration, SingleExperiment, RandomAgentConfiguration, \
-    LazyAgentConfiguration, GreedyAgentConfiguration
+from src.experiment import AggregateExperiment, MDPAgentConfiguration, SingleExperiment, LearningConfiguration, \
+	RandomAgentConfiguration, LazyAgentConfiguration, GreedyAgentConfiguration
 from src.sge_taskgen import SGETaskgen
+from src.sequential_taskgen import SequentialTaskgen
 
 
 def do_experiment(agent_names, args):
@@ -14,7 +16,7 @@ def do_experiment(agent_names, args):
     """
     exp = AggregateExperiment(args)
 
-    runs = range(0, 10)
+    runs = 10
     population = 10
 
     autocorrelations = [1, 10, 25]
@@ -26,20 +28,19 @@ def do_experiment(agent_names, args):
         lazy=LazyAgentConfiguration(population=population, alpha=0.8),
         random=RandomAgentConfiguration(population=population),
         greedy=GreedyAgentConfiguration(population=population),
-        # null=MotionlessAgentConfiguration(population=population)
+        learning = LearningConfiguration(population=1, epsilon = 2 , alpha = 0.2 , gama = 0.9)
     )
 
     agents = {k: v for k, v in agents.items() if k in agent_names}  # Filter out undesired agents
 
     for agent_name, agent in agents.items():
 
-        for autocorrelation, map_instance, consumption, run in \
-                itertools.product(autocorrelations, map_instances, consumptions, runs):
+        for autocorrelation, map_instance, consumption in itertools.product(autocorrelations, map_instances, consumptions):
 
             map_filename = 'r{}_i{}'.format(autocorrelation, map_instance)
 
             params = dict(timesteps=1000,
-                          runs=1,
+                          runs=runs,
                           agent_reproduction=True,
                           agent_position='',
                           simulation_map=map_filename,
@@ -50,30 +51,26 @@ def do_experiment(agent_names, args):
                                   map=map_instance,
                                   consumption=consumption,
                                   agent=agent_name,
-                                  run=run)
+                                  run=runs)
 
             exp.add_single(SingleExperiment(label=label, **params))
 
     exp.bootstrap()
 
-    t = SGETaskgen(exp)
+    t = SequentialTaskgen(exp)
     t.run()
 
 
 def parse_arguments(timeout):
-    opt = Options()
-    opt.name = "test_all"
-    opt.timeout = timeout
-    opt.mem = 8
-    return opt
-
-
-class Options(object):
-    pass
+    parser = argparse.ArgumentParser(description='Generate experiment task runners.')
+    parser.add_argument("--name", required=True, help='The name/ID we want to give to the experiment', default='')
+    args = parser.parse_args()
+    args.timeout = timeout
+    return args
 
 
 def main():
-    do_experiment(['lazy', 'random', 'greedy'], parse_arguments(timeout=100))  # 100sec. are enough for the cheap agents
+    do_experiment(['lazy', 'random', 'greedy','learning'], parse_arguments(timeout=100))  # 100sec. are enough for the cheap agents
     do_experiment(['mdp'], parse_arguments(timeout=12*3600))  # We need much more time for the MDP agent
 
 
