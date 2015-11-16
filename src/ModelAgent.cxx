@@ -13,7 +13,7 @@ namespace Model
 {
 
 ModelAgent::ModelAgent(unsigned id, Environment* world, AgentController::aptr controller)
-	: ModelAgent("ModelAgent_" + std::to_string(id), world, controller)
+	: ModelAgent(controller->getType() + "_" + std::to_string(id), world, controller)
 {}
 
 ModelAgent::ModelAgent(const std::string& id, Environment* world, AgentController::aptr controller)
