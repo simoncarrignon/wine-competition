@@ -1,3 +1,4 @@
+#! /usr/bin/env python
 """
     A small utility file to extract CSV data from HDF5 files and iterate over the results
 """
@@ -32,7 +33,7 @@ def generate_csv(file, output_dir):
     command = "{} {} {}".format(ANALYSIS_BIN, file, output_dir)
     sys.stdout.flush()  # Flush the output to avoid it mixing with the subprocess call.
     print(command)
-    output = subprocess.call(command.split())
+    output = subprocess.call(command.split(),stdout=subprocess.PIPE)
     if not output == 0:
         raise RuntimeError('Error executing command "{0}"'.format(command))
 

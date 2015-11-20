@@ -19,7 +19,7 @@
 int main(int argc, char *argv[])
 {
 // 	if(argc!=4) throw Engine::Exception("USAGE: analysis file.h5 agent.csv rasters.csv");
-	if(argc != 3) throw Engine::Exception("USAGE: ./analysis.bin file.h5 output_dir");
+	//if(argc != 3) throw Engine::Exception("USAGE: ./analysis.bin file.h5 output_dir");
 
 	Engine::SimulationRecord simRecord(1, false);
 	simRecord.loadHDF5(argv[1], true, true);
@@ -35,7 +35,8 @@ int main(int argc, char *argv[])
 // 	const std::vector<std::string> TYPES = {"all", "mdp", "random"};
 // 	const std::vector<std::string> TYPES = {"mdp", "random"};
 //	const std::vector<std::string> TYPES = {"mdp", "random", "lazy", "greedy"};
-	const std::vector<std::string> TYPES = {"learning"};
+	const std::vector<std::string> TYPES = {"mdp", "random", "lazy", "greedy", "learning"};
+//	const std::vector<std::string> TYPES = {"learning"};
 	for (const auto& type:TYPES) {
 		std::string output(std::string(argv[2]) + "/agent-" + type + ".csv");
 		agentResults.apply(simRecord, output, type);

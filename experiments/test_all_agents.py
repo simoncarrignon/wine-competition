@@ -71,7 +71,7 @@ def parse_arguments(timeout):
 
 def main():
     do_experiment(['lazy', 'random', 'greedy','learning'], parse_arguments(timeout=100))  # 100sec. are enough for the cheap agents
-    do_experiment(['mdp'], parse_arguments(timeout=12*3600))  # We need much more time for the MDP agent
+    #do_experiment(['mdp'], parse_arguments(timeout=12*3600))  # We need much more time for the MDP agent
 
 
 if __name__ == "__main__":

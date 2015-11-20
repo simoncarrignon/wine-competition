@@ -8,10 +8,12 @@ args <- commandArgs(trailingOnly = TRUE)
 
 input <- args[1]
 directories <- Sys.glob(paste(input,"run_*",sep="/"))
-output <- args[2]
+type <- args[2]
+output <- args[3]
 
 #store each csv file in a big data frame
-data <- read.csv(paste(directories[1],"csv/agent-learning.csv",sep="/"),sep=";")
+file <- paste("agent-",type,".csv",sep="")
+data <- read.csv(paste(directories[1],"csv",file,sep="/"),sep=";")
 data <- cbind(data,rep("1",nrow(data)))
 bigData <- data
 colnames(bigData) <- c("timeStep","nbAgents","meanResources","expe")

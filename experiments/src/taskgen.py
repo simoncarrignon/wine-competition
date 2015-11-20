@@ -28,7 +28,7 @@ class Taskgen(object):
         configs = [config for single in self.experiment.singles for config in single.configs]
 
         for i, config in enumerate(configs, 1):
-            lines.append("{case}) $SIMULPAST_BIN {config} ;;".format(
+            lines.append("{case}) echo \"{config}\" ; $SIMULPAST_BIN {config} ;;".format(
                 case=i,
                 config=config.replace(SIMULPAST_DIR, '${SIMULPAST_DIR}')
             ))
