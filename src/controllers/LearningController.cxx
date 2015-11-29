@@ -46,7 +46,7 @@ int LearningController::chooseAction(std::vector<int> state)
 
 void LearningController::updateQValues(std::vector<int> previousState, int action, double reward, std::vector<int> state)
 {
-	if (exists(previousState,action) == true)
+	if (existsQValue(previousState,action) == true)
 	{
 		double maxFutureQ = getQvalue(state,0);
 		for(unsigned int i = 1 ; i < directions.size() ; i++)
@@ -81,7 +81,7 @@ double LearningController::getQvalue(std::vector<int> state, int action)
 	}
 }
 
-bool LearningController::exists(std::vector<int> state, int action)
+bool LearningController::existsQValue(std::vector<int> state, int action)
 {
 	auto key = std::make_pair(state,action);
 	auto it = qValues.find(key);

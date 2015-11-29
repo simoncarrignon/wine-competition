@@ -2,7 +2,7 @@
 #ifndef __Learning_CONTROLLER_HXX__
 #define __Learning_CONTROLLER_HXX__
 
-#include "AgentController.hxx"
+#include "LearningController.hxx"
 #include <map>
 #include <vector>
 #include <Point2D.hxx>
@@ -19,27 +19,26 @@ namespace Model
  * for a fixed number of iterations and planning horizon on it,
  * and chooses the action deemed to be optimal.
  */
-class LearningController : public AgentController
+class SarsaController : public LearningController
 {
 protected:
 	//! The configuration object.
 	const ControllerConfig _config;
 
 	std::map<std::pair<std::vector<int>,int>, double> qValues;
+	std::map<std::pair<std::vector<int>,int>, double> traces;
+
 	int previousAction;
 	std::vector<int> previousState;
 	std::vector<Engine::Point2D<int> > directions;
 
 	virtual int chooseAction(std::vector<int> state);
 
-	virtual bool existsQValue(std::vector<int> state, int action);
+	virtual bool existsTrace(std::vector<int> state, int action);
+	double getTrace(std::vector<int> state, int action);
+	void setTrace(std::vector<int> state, int action, double value);
 
-	virtual double getQvalue(std::vector<int> state, int action);
-	virtual void setQvalue(std::vector<int> state, int action, double value);
 	virtual void updateQValues(std::vector<int> previousState, int action, double reward, std::vector<int> state);
-
-	virtual std::vector<int> computeState(Engine::Point2D<int>& position, Engine::World* world, Engine::DynamicRaster& raster);
-
 	
 public:
 	LearningController(const ControllerConfig& config);
