@@ -1,6 +1,5 @@
-
-#ifndef __Learning_CONTROLLER_HXX__
-#define __Learning_CONTROLLER_HXX__
+#ifndef __Sarsa_CONTROLLER_HXX__
+#define __Sarsa_CONTROLLER_HXX__
 
 #include "LearningController.hxx"
 #include <map>
@@ -22,9 +21,6 @@ namespace Model
 class SarsaController : public LearningController
 {
 protected:
-	//! The configuration object.
-	const ControllerConfig _config;
-
 	std::map<std::pair<std::vector<int>,int>, double> qValues;
 	std::map<std::pair<std::vector<int>,int>, double> traces;
 
@@ -41,8 +37,8 @@ protected:
 	virtual void updateQValues(std::vector<int> previousState, int action, double reward, std::vector<int> state);
 	
 public:
-	LearningController(const ControllerConfig& config);
-	virtual ~LearningController() {}
+	SarsaController(const ControllerConfig& config);
+	virtual ~SarsaController() {}
 	
 	virtual std::string getType() const { return "learning"; }
 	virtual ControllerConfig getConfig() const { return _config;} 

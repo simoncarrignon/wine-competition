@@ -58,7 +58,7 @@ void LearningController::updateQValues(std::vector<int> previousState, int actio
 			}
 		}
 			
-		double newValue = getQvalue(previousState,action) + _config.alpha * ( reward + _config.gama * maxFutureQ - getQvalue(previousState,action) );
+		double newValue = getQvalue(previousState,action) + _config.alpha * ( reward + _config.gamma * maxFutureQ - getQvalue(previousState,action) );
 		setQvalue(previousState,action,newValue);
 	}
 	else

@@ -1,4 +1,4 @@
-#include "LearningController.hxx"
+#include "SarsaController.hxx"
 #include <EnvironmentConfig.hxx>
 #include <MoveAction.hxx>
 
@@ -6,7 +6,7 @@ namespace Model
 {
 
 SarsaController::SarsaController(const ControllerConfig& config) 
-	: LearningControler(config)
+	: LearningController(config)
 	{
 	}
 
@@ -42,33 +42,36 @@ int SarsaController::chooseAction(std::vector<int> state)
 	return action;
 }
 
-void Sarsa::updateQValues(std::vector<int> previousState, int action, double reward, std::vector<int> state)
+void SarsaController::updateQValues(std::vector<int> previousState, int action, double reward, std::vector<int> state)
 {
 	setTrace(previousState,action,1.0);
 
+	double maxFutureQ = getQvalue(state,0);
+	for(unsigned int i = 1 ; i < directions.size() ; i++)
+	{
+		double q = getQvalue(state,i);
+		if( q  > maxFutureQ)
+		{
+			maxFutureQ = q;
+		}
+	}
+
 	for (auto it = traces.begin() ; it != traces.end() ; it++)
 	{
-		traces.at(it) = _config.gamma * _config.lambdaParam * it->second;
+		traces.at(it->first) = _config.gamma * _config.lambda * it->second;
 	}
 
 	for (auto it = qValues.begin() ; it != qValues.end() ; it++)
 	{
-		//TODO check how to write the if correctly. Should be state and action of it
-		if (existsQvalue(std::get<0>(it->first),std::get<1>(it->first)) == true)
-		{
-			//TODO write that correctly
-			double delta = reward + _config.gama * maxFutureQ - getQvalue(previousState,action);
-			double newValue = getQvalue(previousState,action) + _config.alpha * (  );
-			setQvalue(previousState,action,newValue);
-		}
-		//TODO else if it is previousState and action
-		{
-			setQvalue(previousState,action,reward);
-		}
+		std::vector<int> itState = std::get<0>(it->first) ;
+		int itAction = std::get<1>(it->first) ;
+		double delta = reward + _config.gamma * maxFutureQ - getQvalue(itState,itAction);
+		double newValue = getQvalue(itState,itAction) + _config.alpha * delta * getTrace(itState, itAction);
+		setQvalue(itState,itAction,newValue);
 	}
 }
 
-double Sarsa::getTrace(std::vector<int> state, int action)
+double SarsaController::getTrace(std::vector<int> state, int action)
 {
 	auto key = std::make_pair(state,action);
 	auto it = traces.find(key);
@@ -82,7 +85,7 @@ double Sarsa::getTrace(std::vector<int> state, int action)
 	}
 }
 
-void Sarsa::setTrace(std::vector<int> state, int action, double value)
+void SarsaController::setTrace(std::vector<int> state, int action, double value)
 {
 	std::pair<std::vector<int>,int> key = std::make_pair(state,action);
 	std::map<std::pair<std::vector<int>,int>,double>::iterator it = traces.find(key);
@@ -96,7 +99,7 @@ void Sarsa::setTrace(std::vector<int> state, int action, double value)
 	}
 }
 
-bool Sarsa::existsTrace(std::vector<int> state, int action)
+bool SarsaController::existsTrace(std::vector<int> state, int action)
 {
 	auto key = std::make_pair(state,action);
 	auto it = traces.find(key);
@@ -110,7 +113,7 @@ bool Sarsa::existsTrace(std::vector<int> state, int action)
 	}
 }
 
-Engine::Action* LearningController::selectAction(ModelAgent& agent)
+Engine::Action* SarsaController::selectAction(ModelAgent& agent)
 {
 	auto current = agent.getPosition();
 	Engine::World* world = agent.getWorld();
