@@ -51,7 +51,7 @@ void LearningController::updateQValues(std::vector<int> previousState, int actio
 		double maxFutureQ = getQvalue(state,0);
 		for(unsigned int i = 1 ; i < directions.size() ; i++)
 		{
-			double q = getQvalue(state,0);
+			double q = getQvalue(state,i);
 			if( q  > maxFutureQ)
 			{
 				maxFutureQ = q;
