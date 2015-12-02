@@ -6,6 +6,7 @@ import argparse
 from src.experiment import SingleExperiment, AggregateExperiment, LearningConfiguration
 from src.sge_taskgen import SGETaskgen
 from src.sequential_taskgen import SequentialTaskgen
+from src.greasy_taskgen import GreasyTaskgen
 
 
 def main():
@@ -27,7 +28,7 @@ def main():
 
     exp.bootstrap()
 
-    t = SequentialTaskgen(exp)
+    t = GreasyTaskgen(exp)
     t.run()
 
 

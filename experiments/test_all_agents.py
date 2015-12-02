@@ -8,6 +8,7 @@ from src.experiment import AggregateExperiment, MDPAgentConfiguration, SingleExp
 	RandomAgentConfiguration, LazyAgentConfiguration, GreedyAgentConfiguration
 from src.sge_taskgen import SGETaskgen
 from src.sequential_taskgen import SequentialTaskgen
+from src.greasy_taskgen import GreasyTaskgen
 
 
 def do_experiment(agent_names, args):
@@ -39,7 +40,7 @@ def do_experiment(agent_names, args):
 
             map_filename = 'r{}_i{}'.format(autocorrelation, map_instance)
 
-            params = dict(timesteps=1000,
+            params = dict(timesteps=10000,
                           runs=runs,
                           agent_reproduction=True,
                           agent_position='',
@@ -57,7 +58,7 @@ def do_experiment(agent_names, args):
 
     exp.bootstrap()
 
-    t = SequentialTaskgen(exp)
+    t = GreasyTaskgen(exp)
     t.run()
 
 
