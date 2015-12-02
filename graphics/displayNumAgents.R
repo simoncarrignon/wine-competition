@@ -11,6 +11,7 @@ directories <- Sys.glob(paste(input,"run_*",sep="/"))
 type <- args[2]
 output <- args[3]
 
+
 #store each csv file in a big data frame
 file <- paste("agent-",type,".csv",sep="")
 data <- read.csv(paste(directories[1],"csv",file,sep="/"),sep=";")
@@ -21,7 +22,7 @@ colnames(bigData) <- c("timeStep","nbAgents","meanResources","expe")
 for (i in seq(2,length(directories),1))
 {
 	directory <- directories[i]
-	data <- read.csv(paste(directory,"csv/agent-learning.csv",sep="/"),sep=";")
+	data <- read.csv(paste(directory,"csv",file,sep="/"),sep=";")
 	data <- cbind(data,rep(toString(i),nrow(data))) 
 	colnames(data) <- c("timeStep","nbAgents","meanResources","expe")
 	bigData <- rbind(bigData,data)

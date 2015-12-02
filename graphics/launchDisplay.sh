@@ -6,7 +6,6 @@ do
 	echo $base
 	type=${base#agent_}
 	type=${type%.autocorrelation*}
-	echo $type
 	./displayNumAgents.R $dir $type $dir"/numAgents"$type".eps" > /dev/null
 	./displayResources.R $dir $type $dir"/resources"$type".eps" > /dev/null
 done
