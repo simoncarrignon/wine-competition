@@ -12,7 +12,7 @@
 namespace Model
 {
 
-const std::vector<std::string> EnvironmentConfig::ALLOWED_CONTROLLERS = {"MDP", "random", "motionless", "lazy", "greedy", "rule", "learning"};
+const std::vector<std::string> EnvironmentConfig::ALLOWED_CONTROLLERS = {"MDP", "random", "motionless", "lazy", "greedy", "rule", "learning", "sarsa"};
 
 EnvironmentConfig::EnvironmentConfig(const std::string& filename) : 
 	Engine::Config(filename),
@@ -77,7 +77,12 @@ void EnvironmentConfig::loadSingleControllerConfig(TiXmlElement* element) {
 	} else if (config.type == "learning") {
 		config.alpha = getParamFloatFromElem(element, "alpha");
 		config.epsilon = getParamFloatFromElem(element, "epsilon");
-		config.gama = getParamFloatFromElem(element, "gama");
+		config.gamma = getParamFloatFromElem(element, "gamma");
+	} else if (config.type == "sarsa") {
+		config.alpha = getParamFloatFromElem(element, "alpha");
+		config.epsilon = getParamFloatFromElem(element, "epsilon");
+		config.gamma = getParamFloatFromElem(element, "gamma");
+		config.lambda = getParamFloatFromElem(element, "lambdaParam");
  	}
 	
  	_controllers.push_back(config);

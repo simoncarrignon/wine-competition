@@ -11,6 +11,7 @@
 #include "controllers/RuleBasedController.hxx"
 #include "controllers/RandomController.hxx"
 #include "controllers/LearningController.hxx"
+#include "controllers/SarsaController.hxx"
 #include <Environment.hxx>
 #include <memory>
 
@@ -25,7 +26,7 @@ void AgentFactory::registerControllerType(const ControllerConfig& config) {
 	
 	
 ModelAgent* AgentFactory::createAgent(unsigned id, Environment* world, const std::string& type, const ControllerConfig& config) { 
- 	if (type == "learning") {
+ 	if ((type == "learning") or (type == "sarsa")) {
 		std::shared_ptr<AgentController> controller;
 		controller = std::make_shared<LearningController>(config);
 		return new ModelAgent(id,world,controller);
@@ -36,7 +37,7 @@ ModelAgent* AgentFactory::createAgent(unsigned id, Environment* world, const std
 }
 
 ModelAgent* AgentFactory::createAgent(const std::string id, Environment* world, const std::string& type, const ControllerConfig& config) { 
- 	if (type == "learning") {
+ 	if ((type == "learning") or (type == "sarsa")) {
 		std::shared_ptr<AgentController> controller;
 		controller = std::make_shared<LearningController>(config);
 		return new ModelAgent(id,world,controller);
@@ -65,6 +66,8 @@ void AgentFactory::createController(const ControllerConfig& config) {
 		controller = std::make_shared<RuleBasedController>();
 	} else if (type == "learning") {
 		controller = std::make_shared<LearningController>(config); //registered for compatibility issue but not used
+	} else if (type == "sarsa") {
+		controller = std::make_shared<SarsaController>(config); //registered for compatibility issue but not used
  	} else {
  		throw Engine::Exception("Unknown controller type"); // Should never get here!
  	}
