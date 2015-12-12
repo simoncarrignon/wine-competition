@@ -78,11 +78,11 @@ void EnvironmentConfig::loadSingleControllerConfig(TiXmlElement* element) {
 		config.alpha = getParamFloatFromElem(element, "alpha");
 		config.epsilon = getParamFloatFromElem(element, "epsilon");
 		config.gamma = getParamFloatFromElem(element, "gamma");
-	} else if (config.type == "learning") {
+	} else if (config.type == "sarsa") {
 		config.alpha = getParamFloatFromElem(element, "alpha");
 		config.epsilon = getParamFloatFromElem(element, "epsilon");
 		config.gamma = getParamFloatFromElem(element, "gamma");
-		config.lambda = getParamFloatFromElem(element, "lambda");
+		config.lambda = getParamFloatFromElem(element, "lambdaParam");
  	}
 	
  	_controllers.push_back(config);
