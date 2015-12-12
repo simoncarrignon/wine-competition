@@ -163,7 +163,7 @@ class AggregateExperiment(object):
         mkdirp(self.directory)
         save_file(self.directory + '/experiment.json', self.dump())
 
-        print("Bootstrapping experiment {} on directory {}".format(self.name, self.directory))
+        print("Bootstrapping experiment " + self.name + " on directory " + self.directory)
         for single in self.singles:
             single.bootstrap(self.directory)
 

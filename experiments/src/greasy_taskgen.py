@@ -21,17 +21,17 @@ class GreasyTaskgen(taskgen.Taskgen):
         configs = [config for single in self.experiment.singles for config in single.configs]
 
         linking = open("linking.sh","w")
-        running = open("running.sh","w")
+        running = open("running.txt","w")
 
         for config in configs:
             print(config)
             directory = os.path.dirname(config)
             print(directory)
 
-            linking.write("ln -s" + EXPERIMENTS_BASE_DIR + "/src/simulation.bin " + directory + "\n")
-            linking.write("ln -s" + ANALYSIS_BIN + " " + directory + "\n")
+            linking.write("ln -s " + EXPERIMENTS_BASE_DIR + "/src/simulation.bin " + directory + "\n")
+            linking.write("ln -s " + ANALYSIS_BIN + " " + directory + "\n")
 
-            running.write("cd " + directory + " && ./simulation.bin &&  ./analysis.bin " + directory + "/output/model.h5" + " " + directory + "/csv && rm -r " + directory + "/output \n")
+            running.write("cd " + directory + " && ./simulation.bin && mkdir " + directory + "/csv &&  ./analysis.bin " + directory + "/output/model.h5" + " " + directory + "/csv && rm -r " + directory + "/output \n")
 
         linking.close()
         running.close()
