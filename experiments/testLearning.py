@@ -1,4 +1,4 @@
-#!/usr/bin/python3.4 
+#!/usr/bin/python2.6
 # -*- coding: utf-8 -*-
 import argparse
 
@@ -22,7 +22,7 @@ def main():
                                         agent_reproduction=1,
                                         agent_position="",
                                         simulation_map='r25_i0',
-                                        label="consumption_{}".format(consumption),
+                                        label="consumption_" + str(consumption),
                                         runs=10,
                                         agents=[agent]))
 
