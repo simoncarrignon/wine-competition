@@ -40,7 +40,7 @@ public:
 	SarsaController(const ControllerConfig& config);
 	virtual ~SarsaController() {}
 	
-	virtual std::string getType() const { return "learning"; }
+	virtual std::string getType() const { return "sarsa"; }
 	virtual ControllerConfig getConfig() const { return _config;} 
 	
 	virtual Engine::Action* selectAction(ModelAgent& agent);

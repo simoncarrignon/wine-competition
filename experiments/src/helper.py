@@ -57,7 +57,10 @@ def make_filename(**kwargs):
     keys = sorted(kwargs.keys())
     assert not any('_' in k for k in keys) and not any(isinstance(k, str) and '_' in k for k in kwargs.values()),\
         "Underscores not allowed in parameter key names"
-    return '.'.join('{}_{}'.format(k, kwargs[k]) for k in keys)
+    toReturn = ''
+    for k in keys:
+        toReturn += str(k) + "_" + str(kwargs[k])
+    return toReturn
 
 
 def parse_filename(name):

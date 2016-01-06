@@ -2,8 +2,9 @@
 # -*- coding: utf-8 -*-
 import argparse
 
+from src.helper import make_filename
 # from experiments.src.exp import AggregateExperiment, MDPAgentConfiguration, SingleExperiment
-from src.experiment import SingleExperiment, AggregateExperiment, LearningConfiguration
+from src.experiment import SingleExperiment, AggregateExperiment, LearningConfiguration, SarsaConfiguration
 from src.sge_taskgen import SGETaskgen
 from src.sequential_taskgen import SequentialTaskgen
 from src.greasy_taskgen import GreasyTaskgen
@@ -16,13 +17,32 @@ def main():
     exp = AggregateExperiment(parse_arguments())
 
     for consumption in range(1, 10, 1):
-        agent = LearningConfiguration(population=1, epsilon = 2 , alpha = 0.2 , gama = 0.9)
-        exp.add_single(SingleExperiment(timesteps=1000, 
+        agent = LearningConfiguration(population=1, epsilon = 2 , alpha = 0.2 , gamma = 0.9)
+
+	label = make_filename(consumption=consumption,
+			      agent="learning")
+
+        exp.add_single(SingleExperiment(timesteps=2000, 
                                         consumption=consumption,
                                         agent_reproduction=1,
                                         agent_position="",
                                         simulation_map='r25_i0',
-                                        label="consumption_" + str(consumption),
+                                        label=label,
+                                        runs=10,
+                                        agents=[agent]))
+
+
+        agent = SarsaConfiguration(population=1, epsilon = 0.2 , alpha = 0.01 , gamma = 0.9, lambdaParam = 0.9 )
+
+	label = make_filename(consumption=consumption,
+			      agent="sarsa")
+
+        exp.add_single(SingleExperiment(timesteps=2000, 
+                                        consumption=consumption,
+                                        agent_reproduction=1,
+                                        agent_position="",
+                                        simulation_map='r25_i0',
+                                        label=label,
                                         runs=10,
                                         agents=[agent]))
 

@@ -21,7 +21,7 @@ def main():
                                         agent_reproduction=1,
                                         agent_position="",
                                         simulation_map='r25_i0',
-                                        label="consumption_{}".format(consumption),
+                                        label="consumption_" + str(consumption),
                                         runs=10,
                                         agents=[agent]))
 

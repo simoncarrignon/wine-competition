@@ -1,10 +1,10 @@
-#!/usr/bin/python3.4 
+#!/usr/bin/python2.6
 # -*- coding: utf-8 -*-
 import argparse
 
 import itertools
 from src.helper import make_filename
-from src.experiment import AggregateExperiment, MDPAgentConfiguration, SingleExperiment, LearningConfiguration, \
+from src.experiment import AggregateExperiment, MDPAgentConfiguration, SingleExperiment, LearningConfiguration, SarsaConfiguration, \
 	RandomAgentConfiguration, LazyAgentConfiguration, GreedyAgentConfiguration
 from src.sge_taskgen import SGETaskgen
 from src.sequential_taskgen import SequentialTaskgen
@@ -20,25 +20,36 @@ def do_experiment(agent_names, args):
     runs = 10
     population = 10
 
-    autocorrelations = [1, 10, 25]
+    #autocorrelations = [1, 10, 25]
+    #map_instances = list(range(1, 6))  # 5 different map instances
+    #consumptions = [2, 3, 4, 5]
+
+    autocorrelations = [1, 25]
     map_instances = list(range(1, 6))  # 5 different map instances
-    consumptions = [2, 3, 4, 5]
+    consumptions = [1, 5]
 
     agents = dict(
         mdp=MDPAgentConfiguration(population=population, horizon=8, width=1000),
         lazy=LazyAgentConfiguration(population=population, alpha=0.8),
         random=RandomAgentConfiguration(population=population),
         greedy=GreedyAgentConfiguration(population=population),
-        learning = LearningConfiguration(population=1, epsilon = 2 , alpha = 0.2 , gama = 0.9)
+        learning = LearningConfiguration(population=population, epsilon = 2 , alpha = 0.2 , gamma = 0.9),
+        sarsa = SarsaConfiguration(population=population, epsilon = 0.2 , alpha = 0.01 , gamma = 0.9, lambdaParam = 0.9 )
     )
 
-    agents = {k: v for k, v in agents.items() if k in agent_names}  # Filter out undesired agents
+    # Filter out undesired agents
+    #agents = {k: v for k, v in agents.items() if k in agent_names}  
+    filteredAgents = {}
+    for k, v in agents.items(): 
+        if k in agent_names:
+            filteredAgents[k] = v
+    agents=filteredAgents
 
     for agent_name, agent in agents.items():
 
         for autocorrelation, map_instance, consumption in itertools.product(autocorrelations, map_instances, consumptions):
 
-            map_filename = 'r{}_i{}'.format(autocorrelation, map_instance)
+            map_filename = 'r' + str(autocorrelation) + '_i' + str(map_instance)
 
             params = dict(timesteps=10000,
                           runs=runs,
@@ -71,8 +82,8 @@ def parse_arguments(timeout):
 
 
 def main():
-    do_experiment(['lazy', 'random', 'greedy','learning'], parse_arguments(timeout=100))  # 100sec. are enough for the cheap agents
-    #do_experiment(['mdp'], parse_arguments(timeout=12*3600))  # We need much more time for the MDP agent
+    do_experiment(['lazy', 'random', 'greedy','learning','sarsa'], parse_arguments(timeout=100))  # 100sec. are enough for the cheap agents
+    do_experiment(['mdp'], parse_arguments(timeout=12*3600))  # We need much more time for the MDP agent
 
 
 if __name__ == "__main__":

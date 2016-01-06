@@ -16,7 +16,7 @@ CONTROLLER_CONFIG = dict(
     lazy='<controller type= "lazy" population="${population}" alpha="${alpha}"/>',
     greedy='<controller type= "greedy" population="${population}" />',
     motionless='<controller type= "motionless" population="${population}"/>',
-    learning='<controller type= "learning" population="${population}" alpha="${alpha}" epsilon="${epsilon}" gama="${gama}" />',
+    learning='<controller type= "learning" population="${population}" alpha="${alpha}" epsilon="${epsilon}" gamma="${gamma}" />',
     sarsa='<controller type= "sarsa" population="${population}" alpha="${alpha}" epsilon="${epsilon}" gamma="${gamma}" lambdaParam="${lambdaParam}"/>'
 )
 
@@ -39,7 +39,7 @@ class AgentConfiguration(object):
 
 class MDPAgentConfiguration(AgentConfiguration):
     def __init__(self, population, width, horizon, bonus=10):
-        super().__init__(population)
+        super(MDPAgentConfiguration,self).__init__(population)
         self.width = width
         self.horizon = horizon
         self.bonus = bonus
@@ -48,11 +48,11 @@ class MDPAgentConfiguration(AgentConfiguration):
         return 'mdp'
 
 class LearningConfiguration(AgentConfiguration):
-    def __init__(self, population, epsilon, alpha, gama):
+    def __init__(self, population, epsilon, alpha, gamma):
         super(LearningConfiguration,self).__init__(population)
         self.epsilon = epsilon
         self.alpha = alpha
-        self.gama = gama
+        self.gamma = gamma
 
     def get_type(self):
         return 'learning'
@@ -86,7 +86,7 @@ class MotionlessAgentConfiguration(AgentConfiguration):
 
 class LazyAgentConfiguration(AgentConfiguration):
     def __init__(self, population, alpha=1):
-        super().__init__(population)
+        super(LazyAgentConfiguration,self).__init__(population)
         self.alpha = alpha
 
     def get_type(self):

@@ -26,9 +26,14 @@ void AgentFactory::registerControllerType(const ControllerConfig& config) {
 	
 	
 ModelAgent* AgentFactory::createAgent(unsigned id, Environment* world, const std::string& type, const ControllerConfig& config) { 
- 	if ((type == "learning") or (type == "sarsa")) {
+ 	if (type == "learning"){
 		std::shared_ptr<AgentController> controller;
 		controller = std::make_shared<LearningController>(config);
+		return new ModelAgent(id,world,controller);
+	}
+	else if (type == "sarsa") {
+		std::shared_ptr<AgentController> controller;
+		controller = std::make_shared<SarsaController>(config);
 		return new ModelAgent(id,world,controller);
 	}
 	else {
@@ -37,9 +42,14 @@ ModelAgent* AgentFactory::createAgent(unsigned id, Environment* world, const std
 }
 
 ModelAgent* AgentFactory::createAgent(const std::string id, Environment* world, const std::string& type, const ControllerConfig& config) { 
- 	if ((type == "learning") or (type == "sarsa")) {
+ 	if (type == "learning"){
 		std::shared_ptr<AgentController> controller;
 		controller = std::make_shared<LearningController>(config);
+		return new ModelAgent(id,world,controller);
+	}
+	else if (type == "sarsa") {
+		std::shared_ptr<AgentController> controller;
+		controller = std::make_shared<SarsaController>(config);
 		return new ModelAgent(id,world,controller);
 	}
 	else {
