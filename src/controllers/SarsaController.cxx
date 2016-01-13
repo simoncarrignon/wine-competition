@@ -8,6 +8,7 @@ namespace Model
 SarsaController::SarsaController(const ControllerConfig& config) 
 	: LearningController(config)
 	{
+		traces.clear();
 	}
 
 int SarsaController::chooseAction(std::vector<int> state)

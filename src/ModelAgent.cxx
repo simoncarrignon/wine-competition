@@ -8,13 +8,15 @@
 #include <utils/logging.hxx>
 
 #include "controllers/LearningController.hxx"
+#include "controllers/SarsaController.hxx"
 
 namespace Model
 {
 
 ModelAgent::ModelAgent(unsigned id, Environment* world, AgentController::aptr controller)
 	: ModelAgent(controller->getType() + "_" + std::to_string(id), world, controller)
-{}
+{
+}
 
 ModelAgent::ModelAgent(const std::string& id, Environment* world, AgentController::aptr controller)
 	: Agent(id), _controller(controller), _numChildren(0)
@@ -61,7 +63,6 @@ void ModelAgent::updateState() {
 
 //! Create an additional agent with a subordinated ID
 void ModelAgent::reproduceAgent() {
-	
 	++_numChildren;
 	std::string id = getId() + "." + std::to_string(_numChildren);
 	
@@ -74,6 +75,12 @@ void ModelAgent::reproduceAgent() {
 		std::shared_ptr<LearningController> dadController = std::dynamic_pointer_cast<LearningController>(getController());
 		std::shared_ptr<AgentController> childController;
 		childController = std::make_shared<LearningController>(dadController->getConfig());
+		child = new ModelAgent(id, world, childController);
+	}
+	else if(getType() == "sarsa") {
+		std::shared_ptr<SarsaController> dadController = std::dynamic_pointer_cast<SarsaController>(getController());
+		std::shared_ptr<AgentController> childController;
+		childController = std::make_shared<SarsaController>(dadController->getConfig());
 		child = new ModelAgent(id, world, childController);
 	}
 	else {
