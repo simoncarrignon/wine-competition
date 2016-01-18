@@ -13,6 +13,12 @@ LearningController::LearningController(const ControllerConfig& config)
 
 int LearningController::chooseAction(std::vector<int> state)
 {
+	std::cout << "choose action for ";
+	for(unsigned int i = 0 ; i < state.size() ; i++)
+	{
+		std::cout << state[i] << " ";
+	}
+	std::cout << std::endl;
 	int action = 0;
 	if(qValues.size() == 0)
 	{
@@ -21,11 +27,13 @@ int LearningController::chooseAction(std::vector<int> state)
 	else
 	{
 		double maxQ = getQvalue(state,0);
+		std::cout << "0 " << maxQ << std::endl;
 		std::vector<int> bestAction;
 		bestAction.push_back(0);
 		for(unsigned int i = 1 ; i < directions.size() ; i++)
 		{
-			double q = getQvalue(state,0);
+			double q = getQvalue(state,i);
+			std::cout << i << " " << q << std::endl;
 			if(q  > maxQ)
 			{
 				maxQ = q;
@@ -48,6 +56,7 @@ void LearningController::updateQValues(std::vector<int> previousState, int actio
 {
 	if (existsQValue(previousState,action) == true)
 	{
+		std::cout << "update q values for previous state" << std::endl;
 		double maxFutureQ = getQvalue(state,0);
 		for(unsigned int i = 1 ; i < directions.size() ; i++)
 		{
@@ -57,13 +66,17 @@ void LearningController::updateQValues(std::vector<int> previousState, int actio
 				maxFutureQ = q;
 			}
 		}
+		std::cout << "max future q " << maxFutureQ << std::endl;
 			
 		double newValue = getQvalue(previousState,action) + _config.alpha * ( reward + _config.gamma * maxFutureQ - getQvalue(previousState,action) );
+		std::cout << "new value " << newValue << std::endl;
 		setQvalue(previousState,action,newValue);
 	}
 	else
 	{
+		std::cout << "set new q values for previous state: " ;
 		setQvalue(previousState,action,reward);
+		std::cout << getQvalue(previousState,action) << std::endl;
 	}
 }
 
@@ -134,15 +147,31 @@ Engine::Action* LearningController::selectAction(ModelAgent& agent)
 	assert(world);
 	Engine::DynamicRaster raster = agent.getResourceRaster();
 
-	int reward = raster.getValue(current);
+	int reward = raster.getValue(current)-1;
 
 	std::vector<int> state = computeState(current,world,raster);
 
+	std::cout << world->getCurrentTimeStep() << ": previousState " ;
+	for(unsigned int i = 0 ; i < previousState.size() ; i++)
+	{
+		std::cout << previousState[i] << " ";
+	}
+	std::cout << std::endl;
+	std::cout << world->getCurrentTimeStep() << ": state " ;
+	for(unsigned int i = 0 ; i < state.size() ; i++)
+	{
+		std::cout << state[i] << " ";
+	}
+	std::cout << std::endl;
+	std::cout << world->getCurrentTimeStep() << ": previousAction " << previousAction << std::endl;
+	std::cout << world->getCurrentTimeStep() << ": reward " << reward << std::endl;
 	updateQValues(previousState,previousAction,reward,state);
 
 	int action = chooseAction(state);
+	std::cout << world->getCurrentTimeStep() << ": new action " << action << std::endl;
 	previousAction = action;
 	previousState = state;
+	std::cout << "#####" << std::endl;
 	return new MoveAction(action);
 }
 
