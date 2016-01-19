@@ -67,6 +67,10 @@ void LearningController::updateQValues(std::vector<int> previousState, int actio
 			}
 		}
 		std::cout << "max future q " << maxFutureQ << std::endl;
+		std::cout << "previous q " << getQvalue(previousState,action) << std::endl;
+		std::cout << "alpha " << _config.alpha << std::endl;
+		std::cout << "reward " << reward << std::endl;
+		std::cout << "gamma " << _config.gamma << std::endl;
 			
 		double newValue = getQvalue(previousState,action) + _config.alpha * ( reward + _config.gamma * maxFutureQ - getQvalue(previousState,action) );
 		std::cout << "new value " << newValue << std::endl;
@@ -147,7 +151,7 @@ Engine::Action* LearningController::selectAction(ModelAgent& agent)
 	assert(world);
 	Engine::DynamicRaster raster = agent.getResourceRaster();
 
-	int reward = raster.getValue(current)-1;
+	int reward = raster.getValue(current)-2;
 
 	std::vector<int> state = computeState(current,world,raster);
 

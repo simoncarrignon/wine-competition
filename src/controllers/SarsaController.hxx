@@ -21,12 +21,7 @@ namespace Model
 class SarsaController : public LearningController
 {
 protected:
-	std::map<std::pair<std::vector<int>,int>, double> qValues;
 	std::map<std::pair<std::vector<int>,int>, double> traces;
-
-	int previousAction;
-	std::vector<int> previousState;
-	std::vector<Engine::Point2D<int> > directions;
 
 	virtual int chooseAction(std::vector<int> state);
 
@@ -35,6 +30,8 @@ protected:
 	void setTrace(std::vector<int> state, int action, double value);
 
 	virtual void updateQValues(std::vector<int> previousState, int action, double reward, std::vector<int> state);
+
+	bool firstStep;
 	
 public:
 	SarsaController(const ControllerConfig& config);
