@@ -40,6 +40,7 @@ protected:
 
 	virtual std::vector<int> computeState(Engine::Point2D<int>& position, Engine::World* world, Engine::DynamicRaster& raster);
 
+	void dispQValues(int timeStep);
 	
 public:
 	LearningController(const ControllerConfig& config);

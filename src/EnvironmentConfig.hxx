@@ -25,6 +25,7 @@ public:
 	float alpha; // alpha parameter for the aplha-lazy controllers.
 							 // also used for the learning and sarsa algorithm
 	double lambda;
+	int episodeLength; //length of an episode for sarsa
 
 	const std::string& getType() const { return type; }
 	unsigned getWidth() const { return width; }

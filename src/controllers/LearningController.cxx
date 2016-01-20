@@ -179,6 +179,24 @@ Engine::Action* LearningController::selectAction(ModelAgent& agent)
 	return new MoveAction(action);
 }
 
+void LearningController::dispQValues(int timeStep)
+{
+	std::cout << timeStep << " QValues:" << std::endl;
+	//display all known state action couples and their Q values
+	for (auto it = qValues.begin() ; it != qValues.end() ; it++)
+	{
+		std::vector<int> itState = std::get<0>(it->first) ;
+		int itAction = std::get<1>(it->first) ;
+		double qValue = it->second;
+		std::cout << "\t" ;
+		for(unsigned int i = 0 ; i < itState.size() ; i++)
+		{
+			std::cout << itState[i] << " ";
+		}
+		std::cout << "; " << itAction << " -> " << qValue << std::endl;
+	}
+}
+
 
 } // namespaces
 

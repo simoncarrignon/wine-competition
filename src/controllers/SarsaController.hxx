@@ -8,6 +8,8 @@
 #include <World.hxx>
 #include <ModelAgent.hxx>
 
+//Follows : https://webdocs.cs.ualberta.ca/~sutton/book/ebook/node77.html
+
 namespace Model
 {
 
@@ -29,9 +31,11 @@ protected:
 	double getTrace(std::vector<int> state, int action);
 	void setTrace(std::vector<int> state, int action, double value);
 
-	virtual void updateQValues(std::vector<int> previousState, int action, double reward, std::vector<int> state);
+	virtual void updateQValues(std::vector<int> previousState, int previousAction, double reward, std::vector<int> state, int action);
 
 	bool firstStep;
+
+	int stepInEpisode;
 	
 public:
 	SarsaController(const ControllerConfig& config);

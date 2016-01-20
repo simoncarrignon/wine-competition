@@ -83,6 +83,7 @@ void EnvironmentConfig::loadSingleControllerConfig(TiXmlElement* element) {
 		config.epsilon = getParamFloatFromElem(element, "epsilon");
 		config.gamma = getParamFloatFromElem(element, "gamma");
 		config.lambda = getParamFloatFromElem(element, "lambdaParam");
+		config.episodeLength = getParamFloatFromElem(element, "episodeLength");
  	}
 	
  	_controllers.push_back(config);
