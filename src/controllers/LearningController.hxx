@@ -31,6 +31,7 @@ protected:
 	std::vector<Engine::Point2D<int> > directions;
 
 	virtual int chooseAction(std::vector<int> state);
+	virtual int chooseAction(std::vector<int> state, double epsilon);
 
 	virtual bool existsQValue(std::vector<int> state, int action);
 
@@ -41,6 +42,8 @@ protected:
 	virtual std::vector<int> computeState(Engine::Point2D<int>& position, Engine::World* world, Engine::DynamicRaster& raster);
 
 	void dispQValues(int timeStep);
+
+	int cpt;
 	
 public:
 	LearningController(const ControllerConfig& config);

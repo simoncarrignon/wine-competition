@@ -26,6 +26,7 @@ protected:
 	std::map<std::pair<std::vector<int>,int>, double> traces;
 
 	virtual int chooseAction(std::vector<int> state);
+	virtual int chooseAction(std::vector<int> state,double epsilon);
 
 	virtual bool existsTrace(std::vector<int> state, int action);
 	double getTrace(std::vector<int> state, int action);

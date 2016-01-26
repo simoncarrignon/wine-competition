@@ -45,6 +45,45 @@ int SarsaController::chooseAction(std::vector<int> state)
 	return action;
 }
 
+int SarsaController::chooseAction(std::vector<int> state, double epsilon)
+{
+	int action = 0;
+	double randomValue = (double)Engine::GeneralState::statistics().getUniformDistValue(0,10000)/10000.0;
+	if(randomValue < epsilon)
+	{
+		action = Engine::GeneralState::statistics().getUniformDistValue(0, MoveAction::DIRECTIONS.size()-1);
+	}
+	else
+	{
+		if(qValues.size() == 0)
+		{
+			action = Engine::GeneralState::statistics().getUniformDistValue(0, MoveAction::DIRECTIONS.size()-1);
+		}
+		else
+		{
+			double maxQ = getQvalue(state,0);
+			std::vector<int> bestAction;
+			bestAction.push_back(0);
+			for(unsigned int i = 1 ; i < directions.size() ; i++)
+			{
+				double q = getQvalue(state,i);
+				if(q  > maxQ)
+				{
+					maxQ = q;
+					bestAction.clear();
+					bestAction.push_back(i);
+				}
+				if(q == maxQ)
+				{
+					bestAction.push_back(i);
+				}
+			}
+			int idAction = Engine::GeneralState::statistics().getUniformDistValue(0, bestAction.size()-1);
+			action = bestAction[idAction];
+		}
+	}
+	return action;
+}
 
 void SarsaController::updateQValues(std::vector<int> previousState, int previousAction, double reward, std::vector<int> state, int action)
 {
@@ -164,7 +203,7 @@ Engine::Action* SarsaController::selectAction(ModelAgent& agent)
 		std::vector<int> state = computeState(current,world,raster);
 
 		//choose action following policy
-		action = chooseAction(state);
+		action = chooseAction(state,_config.epsilon);
 
 		//update traces and q values
 		updateQValues(previousState,previousAction,reward,state,action);

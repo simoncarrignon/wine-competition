@@ -9,16 +9,11 @@ LearningController::LearningController(const ControllerConfig& config)
 	: _config(config)
 	{
 		directions = MoveAction::DIRECTIONS;
+		cpt = 0;
 	}
 
 int LearningController::chooseAction(std::vector<int> state)
 {
-	std::cout << "choose action for ";
-	for(unsigned int i = 0 ; i < state.size() ; i++)
-	{
-		std::cout << state[i] << " ";
-	}
-	std::cout << std::endl;
 	int action = 0;
 	if(qValues.size() == 0)
 	{
@@ -27,13 +22,11 @@ int LearningController::chooseAction(std::vector<int> state)
 	else
 	{
 		double maxQ = getQvalue(state,0);
-		std::cout << "0 " << maxQ << std::endl;
 		std::vector<int> bestAction;
 		bestAction.push_back(0);
 		for(unsigned int i = 1 ; i < directions.size() ; i++)
 		{
 			double q = getQvalue(state,i);
-			std::cout << i << " " << q << std::endl;
 			if(q  > maxQ)
 			{
 				maxQ = q;
@@ -51,12 +44,51 @@ int LearningController::chooseAction(std::vector<int> state)
 	return action;
 }
 
+int LearningController::chooseAction(std::vector<int> state, double epsilon)
+{
+	int action = 0;
+	double randomValue = (double)Engine::GeneralState::statistics().getUniformDistValue(0,10000)/10000.0;
+	if(randomValue < epsilon)
+	{
+		action = Engine::GeneralState::statistics().getUniformDistValue(0, MoveAction::DIRECTIONS.size()-1);
+	}
+	else
+	{
+		if(qValues.size() == 0)
+		{
+			action = Engine::GeneralState::statistics().getUniformDistValue(0, MoveAction::DIRECTIONS.size()-1);
+		}
+		else
+		{
+			double maxQ = getQvalue(state,0);
+			std::vector<int> bestAction;
+			bestAction.push_back(0);
+			for(unsigned int i = 1 ; i < directions.size() ; i++)
+			{
+				double q = getQvalue(state,i);
+				if(q  > maxQ)
+				{
+					maxQ = q;
+					bestAction.clear();
+					bestAction.push_back(i);
+				}
+				if(q == maxQ)
+				{
+					bestAction.push_back(i);
+				}
+			}
+			int idAction = Engine::GeneralState::statistics().getUniformDistValue(0, bestAction.size()-1);
+			action = bestAction[idAction];
+		}
+	}
+	return action;
+}
+
 
 void LearningController::updateQValues(std::vector<int> previousState, int action, double reward, std::vector<int> state)
 {
 	if (existsQValue(previousState,action) == true)
 	{
-		std::cout << "update q values for previous state" << std::endl;
 		double maxFutureQ = getQvalue(state,0);
 		for(unsigned int i = 1 ; i < directions.size() ; i++)
 		{
@@ -66,21 +98,13 @@ void LearningController::updateQValues(std::vector<int> previousState, int actio
 				maxFutureQ = q;
 			}
 		}
-		std::cout << "max future q " << maxFutureQ << std::endl;
-		std::cout << "previous q " << getQvalue(previousState,action) << std::endl;
-		std::cout << "alpha " << _config.alpha << std::endl;
-		std::cout << "reward " << reward << std::endl;
-		std::cout << "gamma " << _config.gamma << std::endl;
 			
 		double newValue = getQvalue(previousState,action) + _config.alpha * ( reward + _config.gamma * maxFutureQ - getQvalue(previousState,action) );
-		std::cout << "new value " << newValue << std::endl;
 		setQvalue(previousState,action,newValue);
 	}
 	else
 	{
-		std::cout << "set new q values for previous state: " ;
 		setQvalue(previousState,action,reward);
-		std::cout << getQvalue(previousState,action) << std::endl;
 	}
 }
 
@@ -150,32 +174,22 @@ Engine::Action* LearningController::selectAction(ModelAgent& agent)
 	Engine::World* world = agent.getWorld();
 	assert(world);
 	Engine::DynamicRaster raster = agent.getResourceRaster();
-
 	int reward = raster.getValue(current)-2;
+
+	cpt ++;
+	if(cpt > _config.episodeLength)
+	{
+		dispQValues(world->getCurrentTimeStep());
+		cpt = 0;
+	}
 
 	std::vector<int> state = computeState(current,world,raster);
 
-	std::cout << world->getCurrentTimeStep() << ": previousState " ;
-	for(unsigned int i = 0 ; i < previousState.size() ; i++)
-	{
-		std::cout << previousState[i] << " ";
-	}
-	std::cout << std::endl;
-	std::cout << world->getCurrentTimeStep() << ": state " ;
-	for(unsigned int i = 0 ; i < state.size() ; i++)
-	{
-		std::cout << state[i] << " ";
-	}
-	std::cout << std::endl;
-	std::cout << world->getCurrentTimeStep() << ": previousAction " << previousAction << std::endl;
-	std::cout << world->getCurrentTimeStep() << ": reward " << reward << std::endl;
 	updateQValues(previousState,previousAction,reward,state);
 
-	int action = chooseAction(state);
-	std::cout << world->getCurrentTimeStep() << ": new action " << action << std::endl;
+	int action = chooseAction(state,_config.epsilon);
 	previousAction = action;
 	previousState = state;
-	std::cout << "#####" << std::endl;
 	return new MoveAction(action);
 }
 
