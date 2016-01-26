@@ -176,12 +176,14 @@ Engine::Action* LearningController::selectAction(ModelAgent& agent)
 	Engine::DynamicRaster raster = agent.getResourceRaster();
 	int reward = raster.getValue(current)-2;
 
+	/*
 	cpt ++;
 	if(cpt > _config.episodeLength)
 	{
 		dispQValues(world->getCurrentTimeStep());
 		cpt = 0;
 	}
+	*/
 
 	std::vector<int> state = computeState(current,world,raster);
 

@@ -178,7 +178,7 @@ Engine::Action* SarsaController::selectAction(ModelAgent& agent)
 	if((stepInEpisode > _config.episodeLength) or (firstStep == true))
 	{
 		//show what the agent has learn
-		dispQValues(world->getCurrentTimeStep());
+		//dispQValues(world->getCurrentTimeStep());
 
 		//reset all traces
 		traces.clear();
