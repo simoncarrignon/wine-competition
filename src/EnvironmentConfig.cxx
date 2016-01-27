@@ -44,7 +44,15 @@ void EnvironmentConfig::loadParams() {
 }
 
 EnvironmentConfig::PointPtr EnvironmentConfig::parseInitialPosition() {
-	std::string str = getParamStr("agents", "position");
+	//try to get the position. If there is none, leave the string empty
+	std::string str = "";
+	try
+	{
+		str = getParamStr("agents", "position");
+	}
+	catch (Engine::Exception &e)
+	{
+	}
 	
 	// If there is no text, return empty pointer.
 	if (str == "") return PointPtr(); 
