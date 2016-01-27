@@ -1,4 +1,4 @@
-#!/usr/bin/python2.6
+#!/usr/bin/python2.7
 # -*- coding: utf-8 -*-
 import argparse
 
@@ -16,39 +16,40 @@ def main():
     """
     exp = AggregateExperiment(parse_arguments())
 
-    for consumption in range(1, 10, 1):
-        agent = LearningConfiguration(population=1, epsilon = 2 , alpha = 0.2 , gamma = 0.9)
+    for consumption in range(1, 3, 1):
+        agent = LearningConfiguration(population=1, epsilon = 0.1 , alpha = 0.1 , gamma = 0.5, episodeLength = 1000)
 
 	label = make_filename(consumption=consumption,
 			      agent="learning")
 
-        exp.add_single(SingleExperiment(timesteps=2000, 
+        exp.add_single(SingleExperiment(timesteps=10000, 
                                         consumption=consumption,
                                         agent_reproduction=1,
                                         agent_position="",
-                                        simulation_map='r25_i0',
+                                        simulation_map='map',
                                         label=label,
-                                        runs=10,
+                                        runs=20,
                                         agents=[agent]))
 
 
-        agent = SarsaConfiguration(population=1, epsilon = 0.2 , alpha = 0.01 , gamma = 0.9, lambdaParam = 0.9 )
+        agent = SarsaConfiguration(population=1, epsilon = 0.1 , alpha = 0.1 , gamma = 0.1, lambdaParam = 0.9, episodeLength = 500 )
 
 	label = make_filename(consumption=consumption,
 			      agent="sarsa")
 
-        exp.add_single(SingleExperiment(timesteps=2000, 
+        exp.add_single(SingleExperiment(timesteps=10000, 
                                         consumption=consumption,
                                         agent_reproduction=1,
                                         agent_position="",
-                                        simulation_map='r25_i0',
+                                        simulation_map='map',
                                         label=label,
-                                        runs=10,
+                                        runs=20,
                                         agents=[agent]))
 
     exp.bootstrap()
 
-    t = GreasyTaskgen(exp)
+    #t = GreasyTaskgen(exp)
+    t = SequentialTaskgen(exp)
     t.run()
 
 

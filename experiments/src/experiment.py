@@ -16,8 +16,8 @@ CONTROLLER_CONFIG = dict(
     lazy='<controller type= "lazy" population="${population}" alpha="${alpha}"/>',
     greedy='<controller type= "greedy" population="${population}" />',
     motionless='<controller type= "motionless" population="${population}"/>',
-    learning='<controller type= "learning" population="${population}" alpha="${alpha}" epsilon="${epsilon}" gamma="${gamma}" />',
-    sarsa='<controller type= "sarsa" population="${population}" alpha="${alpha}" epsilon="${epsilon}" gamma="${gamma}" lambdaParam="${lambdaParam}"/>'
+    learning='<controller type= "learning" population="${population}" alpha="${alpha}" epsilon="${epsilon}" gamma="${gamma}" episodeLength="${episodeLength}" />',
+    sarsa='<controller type= "sarsa" population="${population}" alpha="${alpha}" epsilon="${epsilon}" gamma="${gamma}" lambdaParam="${lambdaParam}" episodeLength="${episodeLength}" />'
 )
 
 
@@ -48,22 +48,24 @@ class MDPAgentConfiguration(AgentConfiguration):
         return 'mdp'
 
 class LearningConfiguration(AgentConfiguration):
-    def __init__(self, population, epsilon, alpha, gamma):
+    def __init__(self, population, epsilon, alpha, gamma, episodeLength):
         super(LearningConfiguration,self).__init__(population)
         self.epsilon = epsilon
         self.alpha = alpha
         self.gamma = gamma
+        self.episodeLength = episodeLength
 
     def get_type(self):
         return 'learning'
 
 class SarsaConfiguration(AgentConfiguration):
-    def __init__(self, population, alpha, epsilon, gamma, lambdaParam):
+    def __init__(self, population, alpha, epsilon, gamma, lambdaParam, episodeLength):
         super(SarsaConfiguration,self).__init__(population)
         self.epsilon = epsilon
         self.alpha = alpha
         self.gamma = gamma
         self.lambdaParam = lambdaParam
+        self.episodeLength = episodeLength
 
     def get_type(self):
         return 'sarsa'
