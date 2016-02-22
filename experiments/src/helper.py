@@ -59,7 +59,7 @@ def make_filename(**kwargs):
         "Underscores not allowed in parameter key names"
     toReturn = ''
     for k in keys:
-        toReturn += str(k) + "_" + str(kwargs[k])
+        toReturn += str(k) + "_" + str(kwargs[k]) + "__"
     return toReturn
 
 

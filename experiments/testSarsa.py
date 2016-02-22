@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 import argparse
 
+from src.helper import make_filename
 # from experiments.src.exp import AggregateExperiment, MDPAgentConfiguration, SingleExperiment
 from src.experiment import SingleExperiment, AggregateExperiment, LearningConfiguration, SarsaConfiguration
 from src.sge_taskgen import SGETaskgen
@@ -14,16 +15,32 @@ def main():
     """
     exp = AggregateExperiment(parse_arguments())
 
-    for consumption in range(1, 10, 1):
-        agent = SarsaConfiguration(population=1, alpha = 0.01, epsilon = 0.2, gamma = 0.9, lambdaParam = "0.9")
-        exp.add_single(SingleExperiment(timesteps=1000, 
-                                        consumption=consumption,
-                                        agent_reproduction=1,
-                                        agent_position="",
-                                        simulation_map='r25_i0',
-                                        label="consumption_" + str(consumption),
-                                        runs=10,
-                                        agents=[agent]))
+    for consumption in [2]:
+        for alpha in [0.05,0.25] :
+            for epsilon in [0.05,0.25]:
+                for gamma in [0.05,0.25]:
+                    for lambdaParam in [0.05,0.15]:
+                        for episodeLength in [200,500]:
+
+                            agent = SarsaConfiguration(population=1, alpha = alpha, epsilon = epsilon, gamma = gamma, lambdaParam = lambdaParam, episodeLength = episodeLength )
+
+                            label = make_filename(consumption=consumption,
+                                                  alpha = alpha,
+                                                  epsilon = epsilon,
+                                                  gamma = gamma,
+                                                  lambdaParam = lambdaParam,
+                                                  episodeLength = episodeLength,
+                                                  agent="sarsa")
+
+                            exp.add_single(SingleExperiment(timesteps=1000, 
+                                                            consumption=consumption,
+                                                            agent_reproduction=1,
+                                                            agent_position="",
+                                                            simulation_map='r25_i0',
+                                                            label=label,
+                                                            runs=10,
+                                                            agents=[agent]))
+
 
     exp.bootstrap()
 
