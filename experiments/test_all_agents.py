@@ -1,4 +1,4 @@
-#!/usr/bin/python2.6
+#!/usr/bin/python3.4
 # -*- coding: utf-8 -*-
 import argparse
 
@@ -9,6 +9,7 @@ from src.experiment import AggregateExperiment, MDPAgentConfiguration, SingleExp
 from src.sge_taskgen import SGETaskgen
 from src.sequential_taskgen import SequentialTaskgen
 from src.greasy_taskgen import GreasyTaskgen
+from src.parallel_taskgen import ParallelTaskgen
 
 
 def do_experiment(agent_names, args):
@@ -26,15 +27,15 @@ def do_experiment(agent_names, args):
 
     autocorrelations = [1, 25]
     map_instances = list(range(1, 6))  # 5 different map instances
-    consumptions = [1, 5]
+    consumptions = [2, 3]
 
     agents = dict(
         mdp=MDPAgentConfiguration(population=population, horizon=8, width=1000),
         lazy=LazyAgentConfiguration(population=population, alpha=0.8),
         random=RandomAgentConfiguration(population=population),
         greedy=GreedyAgentConfiguration(population=population),
-        learning = LearningConfiguration(population=population, epsilon = 2 , alpha = 0.2 , gamma = 0.9),
-        sarsa = SarsaConfiguration(population=population, epsilon = 0.2 , alpha = 0.01 , gamma = 0.9, lambdaParam = 0.9 )
+        learning = LearningConfiguration(population=population, epsilon = 2 , alpha = 0.2 , gamma = 0.9, episodeLength = 500),
+        sarsa = SarsaConfiguration(population=population, epsilon = 0.2 , alpha = 0.01 , gamma = 0.9, lambdaParam = 0.9, episodeLength = 500 )
     )
 
     # Filter out undesired agents
@@ -51,7 +52,7 @@ def do_experiment(agent_names, args):
 
             map_filename = 'r' + str(autocorrelation) + '_i' + str(map_instance)
 
-            params = dict(timesteps=10000,
+            params = dict(timesteps=2000,
                           runs=runs,
                           agent_reproduction=True,
                           agent_position='',
@@ -69,7 +70,9 @@ def do_experiment(agent_names, args):
 
     exp.bootstrap()
 
-    t = GreasyTaskgen(exp)
+    #t = GreasyTaskgen(exp)
+    #t = SequentialTaskgen(exp)
+    t = ParallelTaskgen(exp)
     t.run()
 
 
@@ -82,8 +85,9 @@ def parse_arguments(timeout):
 
 
 def main():
-    do_experiment(['lazy', 'random', 'greedy','learning','sarsa'], parse_arguments(timeout=100))  # 100sec. are enough for the cheap agents
-    do_experiment(['mdp'], parse_arguments(timeout=12*3600))  # We need much more time for the MDP agent
+    #do_experiment(['lazy', 'random', 'greedy','learning','sarsa'], parse_arguments(timeout=100))  # 100sec. are enough for the cheap agents
+    do_experiment(['lazy', 'random', 'greedy'], parse_arguments(timeout=100))  # 100sec. are enough for the cheap agents
+    #do_experiment(['mdp'], parse_arguments(timeout=12*3600))  # We need much more time for the MDP agent
 
 
 if __name__ == "__main__":

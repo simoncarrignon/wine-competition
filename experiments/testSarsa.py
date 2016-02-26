@@ -7,6 +7,7 @@ from src.helper import make_filename
 from src.experiment import SingleExperiment, AggregateExperiment, LearningConfiguration, SarsaConfiguration
 from src.sge_taskgen import SGETaskgen
 from src.sequential_taskgen import SequentialTaskgen
+from src.parallel_taskgen import ParallelTaskgen
 
 
 def main():
@@ -15,11 +16,11 @@ def main():
     """
     exp = AggregateExperiment(parse_arguments())
 
-    for consumption in [2]:
-        for alpha in [0.05,0.25] :
-            for epsilon in [0.05,0.25]:
-                for gamma in [0.05,0.25]:
-                    for lambdaParam in [0.05,0.15]:
+    for consumption in [3]:
+        for alpha in [0.05,0.15,0.3] :
+            for epsilon in [0.05,0.15,0.3]:
+                for gamma in [0.05,0.15,0.3]:
+                    for lambdaParam in [0.3,0.4]:
                         for episodeLength in [200,500]:
 
                             agent = SarsaConfiguration(population=1, alpha = alpha, epsilon = epsilon, gamma = gamma, lambdaParam = lambdaParam, episodeLength = episodeLength )
@@ -32,11 +33,11 @@ def main():
                                                   episodeLength = episodeLength,
                                                   agent="sarsa")
 
-                            exp.add_single(SingleExperiment(timesteps=1000, 
+                            exp.add_single(SingleExperiment(timesteps=2000, 
                                                             consumption=consumption,
                                                             agent_reproduction=1,
                                                             agent_position="",
-                                                            simulation_map='r25_i0',
+                                                            simulation_map='r1_i1',
                                                             label=label,
                                                             runs=10,
                                                             agents=[agent]))
@@ -44,7 +45,7 @@ def main():
 
     exp.bootstrap()
 
-    t = SequentialTaskgen(exp)
+    t = ParallelTaskgen(exp)
     t.run()
 
 
