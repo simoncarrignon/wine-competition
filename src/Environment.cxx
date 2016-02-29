@@ -17,6 +17,7 @@ Environment::Environment(EnvironmentConfig* config, Engine::Scheduler* scheduler
 	agentFactory()
 {}
 
+
 Environment::~Environment() {}
 
 void Environment::createRasters() {

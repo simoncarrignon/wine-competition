@@ -25,12 +25,13 @@
 
 
 #include <Exception.hxx>
-#include <mpi.h>
 #include <omp.h>
 #include <thread>
 #include <fstream>
 #include <Logger.hxx>
 #include <boost/format.hpp>
+
+#include <time.h>  
 
 namespace Model
 {
@@ -58,7 +59,9 @@ public:
 	}
 	
 	std::ostream& log(const std::string& level, const std::string& fileName) {
-		double elapsed = MPI_Wtime() - _startTime;
+		time_t timer;
+		time(&timer);
+		double elapsed = (double)timer - _startTime;
 		std::ostream& s = Engine::Logger::log(fileName);
 		
 		// Append the log level
