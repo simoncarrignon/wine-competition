@@ -12,6 +12,7 @@
 #include "controllers/RandomController.hxx"
 #include "controllers/LearningController.hxx"
 #include "controllers/SarsaController.hxx"
+#include "controllers/EvoController.hxx"
 #include <Environment.hxx>
 #include <memory>
 
@@ -34,6 +35,11 @@ ModelAgent* AgentFactory::createAgent(unsigned id, Environment* world, const std
 	else if (type == "sarsa") {
 		std::shared_ptr<AgentController> controller;
 		controller = std::make_shared<SarsaController>(config);
+		return new ModelAgent(id,world,controller);
+	}
+	else if (type == "evo") {
+		std::shared_ptr<AgentController> controller;
+		controller = std::make_shared<EvoController>(config);
 		return new ModelAgent(id,world,controller);
 	}
 	else {
