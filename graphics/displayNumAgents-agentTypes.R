@@ -26,7 +26,7 @@ postscript(output)
 #create an empty plot
 plot(0,ylim=c(0,2300),xlim=c(0,2000))
 labelLine = c()
-graphColors <- topo.colors(nbAgentTypes)
+graphColors <- rainbow(nbAgentTypes)
 
 for( i in seq(1,nbAgentTypes))
 {
