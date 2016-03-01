@@ -12,7 +12,7 @@
 namespace Model
 {
 
-const std::vector<std::string> EnvironmentConfig::ALLOWED_CONTROLLERS = {"MDP", "random", "motionless", "lazy", "greedy", "rule", "learning", "sarsa"};
+const std::vector<std::string> EnvironmentConfig::ALLOWED_CONTROLLERS = {"MDP", "random", "motionless", "lazy", "greedy", "rule", "learning", "sarsa", "evo"};
 
 EnvironmentConfig::EnvironmentConfig(const std::string& filename) : 
 	Engine::Config(filename),

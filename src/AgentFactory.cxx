@@ -84,6 +84,8 @@ void AgentFactory::createController(const ControllerConfig& config) {
 		controller = std::make_shared<LearningController>(config); //registered for compatibility issue but not used
 	} else if (type == "sarsa") {
 		controller = std::make_shared<SarsaController>(config); //registered for compatibility issue but not used
+	} else if (type == "evo") {
+		controller = std::make_shared<EvoController>(config); //registered for compatibility issue but not used
  	} else {
  		throw Engine::Exception("Unknown controller type"); // Should never get here!
  	}

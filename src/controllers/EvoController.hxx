@@ -31,10 +31,12 @@ protected:
 
 	void computeInputs(Engine::DynamicRaster raster, Engine::Point2D<int> current);
 	
-	Engine::Point2D<int> realToSimulatorOrientation(double realInput);
+	std::vector<Engine::Point2D<int>> realToSimulatorOrientation(double realInput);
 
 	std::vector<int> inputs;
-	std::vector<Engine::Point2D<int>> directions;
+	std::vector<Engine::Point2D<int>> rotatedDirections;
+
+	int step;
 	
 public:
 	EvoController(const ControllerConfig& config);
