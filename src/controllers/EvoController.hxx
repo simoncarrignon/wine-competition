@@ -29,14 +29,21 @@ protected:
 	double realVelocity;
 	Engine::Point2D<int> simulatorOrientation;
 
-	void computeInputs(Engine::DynamicRaster raster, Engine::Point2D<int> current);
+	void computeInputs(Engine::World* world, Engine::DynamicRaster raster, Engine::Point2D<int> current);
 	
+	int angleToDirection(double angle);
 	std::vector<Engine::Point2D<int>> realToSimulatorOrientation(double realInput);
 
+	void computeOutputs();
+	Engine::Action* computeAction();
+
 	std::vector<int> inputs;
-	std::vector<Engine::Point2D<int>> rotatedDirections;
+	std::vector<double> params;
+	int paramSize;
 
 	int step;
+	int hiddenLayerSize;
+	double rotationSpeed;
 	
 public:
 	EvoController(const ControllerConfig& config);

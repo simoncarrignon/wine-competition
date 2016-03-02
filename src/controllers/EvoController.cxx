@@ -1,6 +1,7 @@
 #include "EvoController.hxx"
 #include <EnvironmentConfig.hxx>
 #include <MoveAction.hxx>
+#include <math.h>
 
 namespace Model
 {
@@ -8,56 +9,66 @@ namespace Model
 EvoController::EvoController(const ControllerConfig& config) 
 	: _config(config)
 	{
-		realOrientation = 360.0; //TODO initialize randomly
-		realVelocity = 1.0;
-		rotatedDirections = realToSimulatorOrientation(realOrientation);
+		hiddenLayerSize = 5 ; //TODO load hidden layer size from configuration
+		realOrientation = 45.0; //TODO initialize randomly
+		rotationSpeed = 3.0; //TODO get it from configuration
+		realVelocity = 0.0;
+		paramSize = ((MoveAction::DIRECTIONS.size() + 1) * hiddenLayerSize ) + (hiddenLayerSize *2);
+		params.resize(paramSize,0.0);
+		for(int i = 45 ; i < paramSize ; i++)
+		{
+			params[i] = 1.0;
+		}
 	}
+
+int EvoController::angleToDirection(double angle)
+{
+	int directionIndice = 0;
+
+	if((angle >= 337.50) or (angle < 22.50))
+	{
+		directionIndice = 0;
+	}
+	else if((angle >= 22.50) and (angle < 67.50))
+	{
+		directionIndice = 1;
+	}
+	else if((angle >= 67.50) and (angle < 112.50))
+	{
+		directionIndice = 2;
+	}
+	else if((angle >= 112.50) and (angle < 157.50))
+	{
+		directionIndice = 3;
+	}
+	else if((angle >= 157.50) and (angle < 202.50))
+	{
+		directionIndice = 4;
+	}
+	else if((angle >= 202.50) and (angle < 247.50))
+	{
+		directionIndice = 5;
+	}
+	else if((angle >= 247.50) and (angle < 292.50))
+	{
+		directionIndice = 6;
+	}
+	else if((angle >= 292.50) and (angle < 337.50))
+	{
+		directionIndice = 7;
+	}
+
+	return directionIndice;
+}
 
 std::vector<Engine::Point2D<int>> EvoController::realToSimulatorOrientation(double realInput)
 {
+	//the view will be recentered on the current direction of the agent
+	int shift = angleToDirection(realOrientation);
+
 	std::vector<Engine::Point2D<int>> directions = MoveAction::DIRECTIONS;
 	std::vector<Engine::Point2D<int>> output;
 	output.resize(directions.size());
-	int shift = 0;
-	if(realVelocity > 0.5)
-	{
-		if((realOrientation >= 337.50) or (realOrientation < 22.50))
-		{
-			shift = 0;
-		}
-		else if((realOrientation >= 22.50) and (realOrientation < 67.50))
-		{
-			shift = 1;
-		}
-		else if((realOrientation >= 67.50) and (realOrientation < 112.50))
-		{
-			shift = 2;
-		}
-		else if((realOrientation >= 112.50) and (realOrientation < 157.50))
-		{
-			shift = 3;
-		}
-		else if((realOrientation >= 157.50) and (realOrientation < 202.50))
-		{
-			shift = 4;
-		}
-		else if((realOrientation >= 202.50) and (realOrientation < 247.50))
-		{
-			shift = 5;
-		}
-		else if((realOrientation >= 247.50) and (realOrientation < 292.50))
-		{
-			shift = 6;
-		}
-		else if((realOrientation >= 292.50) and (realOrientation < 337.50))
-		{
-			shift = 7;
-		}
-	}
-	else
-	{
-		shift = 0;
-	}
 
 	output[0] = directions[0];
 	for(unsigned int i = 1 ; i < directions.size() ; i ++)
@@ -73,30 +84,103 @@ std::vector<Engine::Point2D<int>> EvoController::realToSimulatorOrientation(doub
 	return output;
 }
 
-void EvoController::computeInputs(Engine::DynamicRaster raster, Engine::Point2D<int> current)
+void EvoController::computeInputs(Engine::World* world, Engine::DynamicRaster raster, Engine::Point2D<int> current)
 {
 	inputs.clear();
-	rotatedDirections = realToSimulatorOrientation(realOrientation);
+
+	std::vector<Engine::Point2D<int>> rotatedDirections = realToSimulatorOrientation(realOrientation);
 	for(unsigned int i = 0 ; i < rotatedDirections.size() ; i ++)
 	{
-		inputs.push_back(raster.getValue(current+rotatedDirections[i]));
-		std::cout << inputs[i] << " ";
+		const Engine::Point2D<int> point = current + rotatedDirections[i];
+		if (world->checkPosition(point)) 
+		{
+			inputs.push_back(raster.getValue(current+rotatedDirections[i]));
+		}
+		else
+		{
+			inputs.push_back(-1);
+		}
 	}
-	std::cout << std::endl;
+}
+
+void EvoController::computeOutputs()
+{
+	int paramsIndice = 0;
+
+	//from inputs to hidden layer
+
+	// weighted sum
+	std::vector<double> tmp(hiddenLayerSize, 0.0);
+	for(unsigned int i = 0; i < inputs.size(); i++) {
+		for(unsigned int j = 0; j < tmp.size(); j++) {
+			tmp[j] += inputs[i] * params[paramsIndice++];
+		}
+	}
+
+	//use of bias
+	for(unsigned int j = 0; j < tmp.size(); j++)
+		tmp[j] += params[paramsIndice++] * 1.0;
+
+	// Tanh activation function
+	for(unsigned int i = 0; i < tmp.size(); i++)
+		tmp[i] = tanh(tmp[i]);
+
+	//from hidden layer to output
+
+	// weighted sum
+	std::vector<double> outputs(2, 0.0);
+	for(unsigned int i = 0; i < tmp.size(); i++) {
+		for(unsigned int j = 0; j < 2; j++) {
+			outputs[j] += tmp[i] * params[paramsIndice++];
+		}
+	}
+
+	//do not use a new bias from hidden to output
+
+	// Tanh activation function
+	for(unsigned int i = 0; i < 2; i++)
+		outputs[i] = tanh(outputs[i]);
+
+
+	//use output to update orientation
+	realOrientation = realOrientation + outputs[0];
+	//replace the orientation between 0 and 360.
+	//use fmod to have it with double
+	realOrientation = fmod(realOrientation,360);
+
+	//use output to update velocity and cast it between -1 and 1
+	realVelocity = realVelocity + outputs[1];
+	if (realVelocity > 1.0)
+	{
+		realVelocity = 1.0;
+	}
+	if (realVelocity < -1.0)
+	{
+		realVelocity = -1.0;
+	}
+}
+
+Engine::Action* EvoController::computeAction()
+{
+	if (realVelocity > 0.5)
+	{
+		return new MoveAction(angleToDirection(realOrientation));
+	}
+	return new MoveAction(0);
 }
 
 Engine::Action* EvoController::selectAction(ModelAgent& agent)
 {
-	agent.setPosition(Engine::Point2D<int>(5,5));
 	auto current = agent.getPosition();
 	Engine::World* world = agent.getWorld();
 	assert(world);
 	Engine::DynamicRaster raster = agent.getResourceRaster();
 	int reward = raster.getValue(current)-2;
 
-	computeInputs(raster,current);
-
-	return new MoveAction(0);
+	computeInputs(world,raster,current);
+	computeOutputs();
+	return computeAction();
+	//return new MoveAction(0);
 }
 
 
