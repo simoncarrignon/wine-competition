@@ -30,6 +30,7 @@ protected:
 
 public:
 	static const unsigned RESOURCE_RASTER_IDX = 0;
+	static const unsigned OBSTACLE_RASTER_IDX = 1;
 	
 	Environment(EnvironmentConfig* config, Engine::Scheduler* scheduler = 0);
 	virtual ~Environment();

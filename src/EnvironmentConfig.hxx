@@ -45,7 +45,8 @@ protected:
 	static const std::vector<std::string> ALLOWED_CONTROLLERS;
 	
 	Engine::Size<int> _size;
-    std::string map;
+    std::string mapResource;
+    std::string mapObstacle;
 	std::string _logdir;
 	std::vector<ControllerConfig> _controllers;
 	float _consumptionFactor;
@@ -76,7 +77,9 @@ public:
 	
 	const PointPtr getInitialAgentPosition() const { return _initialAgentPosition; }
 	
-	const std::string& getMap() const { return map; }
+	const std::string& getMapResource() const { return mapResource; }
+
+	const std::string& getMapObstacle() const { return mapObstacle; }
 	
 	const std::vector<ControllerConfig>& getControllerConfigurations() const { return _controllers; }
 	

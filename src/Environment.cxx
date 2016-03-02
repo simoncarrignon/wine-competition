@@ -22,9 +22,13 @@ Environment::~Environment() {}
 
 void Environment::createRasters() {
     registerDynamicRaster("resources", true, RESOURCE_RASTER_IDX);
-    Engine::DynamicRaster& raster = getDynamicRaster(RESOURCE_RASTER_IDX);
-    Engine::GeneralState::rasterLoader().fillGDALRaster(raster, getModelConfig()->getMap(), getBoundaries());
+    Engine::DynamicRaster& rasterResource = getDynamicRaster(RESOURCE_RASTER_IDX);
+    Engine::GeneralState::rasterLoader().fillGDALRaster(rasterResource, getModelConfig()->getMapResource(), getBoundaries());
 	updateRasterToMaxValues(RESOURCE_RASTER_IDX);
+
+    registerStaticRaster("obstacles", true, OBSTACLE_RASTER_IDX);
+    Engine::StaticRaster& rasterObstacle = getStaticRaster(OBSTACLE_RASTER_IDX);
+    Engine::GeneralState::rasterLoader().fillGDALRaster(rasterObstacle, getModelConfig()->getMapObstacle(), getBoundaries());
 }
 
 void Environment::createAgents() {

@@ -16,7 +16,7 @@ const std::vector<std::string> EnvironmentConfig::ALLOWED_CONTROLLERS = {"MDP", 
 
 EnvironmentConfig::EnvironmentConfig(const std::string& filename) : 
 	Engine::Config(filename),
-	_size(0, 0), map(""), _logdir(""), _controllers(0)
+	_size(0, 0), mapResource(""), mapObstacle(""), _logdir(""), _controllers(0)
 {}
 
 EnvironmentConfig::~EnvironmentConfig()
@@ -37,7 +37,8 @@ void EnvironmentConfig::loadParams() {
 	_initialAgentPosition = parseInitialPosition();
 	
 	// The map raster file
-	map = getParamStr("environment", "map");
+	mapResource = getParamStr("environment", "mapResource");
+	mapObstacle = getParamStr("environment", "mapObstacle");
 	
 	// Load the configuration corresponding to the agent controllers
 	loadControllerParams();
