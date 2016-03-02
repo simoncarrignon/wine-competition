@@ -171,9 +171,9 @@ Engine::Action* SarsaController::selectAction(ModelAgent& agent)
 	Engine::DynamicRaster raster = agent.getResourceRaster();
 
 	stepInEpisode ++;
-	//TODO choose a random action
 	int action = 0;
 
+	//TODO do a new episode when we get a lot of energy !!!
 	//new episode
 	if((stepInEpisode > _config.episodeLength) or (firstStep == true))
 	{
