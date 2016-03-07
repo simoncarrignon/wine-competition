@@ -38,8 +38,6 @@ public:
 	ModelAgent(unsigned id, Environment* world, AgentController::aptr controller);
 	ModelAgent(const std::string& id, Environment* world, AgentController::aptr controller);
 	
-	virtual ~ModelAgent();
-	
 	//! We overload the type detection routine to make use of the controller type
 	virtual std::string getType() ;
 
@@ -92,9 +90,13 @@ public:
 
 	//! Helper to return the agent's world's resource raster
 	const Engine::DynamicRaster& getResourceRaster() const;
-	
 	//! Helper to return the agent's world's resource raster, non-const version
 	Engine::DynamicRaster& getResourceRaster();
+
+	//! Helper to return the agent's world's obstacle raster
+	const Engine::StaticRaster& getObstacleRaster() const;
+	//! Helper to return the agent's world's obstacle raster, non-const version
+	Engine::StaticRaster& getObstacleRaster();
 	
 	void registerAttributes();
 	void serialize();

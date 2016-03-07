@@ -6,6 +6,7 @@
 #include <Action.hxx>
 #include <utils/logging.hxx>
 #include <Agent.hxx>
+#include "ModelAgent.hxx"
 
 namespace Model
 {
@@ -73,8 +74,27 @@ public:
 	
 	//! Return true iff the current action is valid for the given agent.
 	bool isValidFor(const Engine::Agent& agent) {
-		return _direction == DIRECTION_STAY  // The no-move direction is always valid.
-		       || agent.getWorld()->checkPosition(getResultingPosition(agent.getPosition()));
+		// The no-move direction is always valid.
+		if( _direction == DIRECTION_STAY) 
+		{
+			return true;
+		}
+		//If the world says that we can move, check for obstacles
+		else if (agent.getWorld()->checkPosition(getResultingPosition(agent.getPosition())) == true)
+		{
+			const ModelAgent& castedAgent = dynamic_cast<const ModelAgent&>(agent);
+			Engine::StaticRaster obstacleRaster = castedAgent.getObstacleRaster();
+			int obstacle = obstacleRaster.getValue(getResultingPosition(agent.getPosition()));
+			//if there is an obstacle do not move
+			if(obstacle > 0)
+			{
+				return false;
+			}
+			return true;
+		}
+
+		//Do not move outside of the world
+		return false;
 	}
 
 	//! Compute a vector with all the applicable actions in the given world and for the given position.

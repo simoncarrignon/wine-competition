@@ -28,7 +28,7 @@ ModelAgent::ModelAgent(const std::string& id, Environment* world, AgentControlle
 }
 
 
-ModelAgent::~ModelAgent() {}
+//ModelAgent::~ModelAgent() {}
 
 std::string ModelAgent::getType() {
 	return getController()->getType();
@@ -140,6 +140,14 @@ const Engine::DynamicRaster& ModelAgent::getResourceRaster() const {
 }
 Engine::DynamicRaster& ModelAgent::getResourceRaster() {
 	return getWorld()->getDynamicRaster(Environment::RESOURCE_RASTER_IDX);
+}
+
+//! Helpers to return the agent's world's obstacle raster, const- and non-const versions
+const Engine::StaticRaster& ModelAgent::getObstacleRaster() const {
+	return getWorld()->getDynamicRaster(Environment::OBSTACLE_RASTER_IDX);
+}
+Engine::StaticRaster& ModelAgent::getObstacleRaster() {
+	return getWorld()->getDynamicRaster(Environment::OBSTACLE_RASTER_IDX);
 }
 
 std::ostream& ModelAgent::print(std::ostream& os) {

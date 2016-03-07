@@ -10,3 +10,5 @@ data
 *.o
 simulation.bin
 .sconsign.dblite
+
+*.swp
