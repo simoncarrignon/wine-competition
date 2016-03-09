@@ -35,6 +35,7 @@ protected:
 	virtual void updateQValues(std::vector<int> previousState, int previousAction, double reward, std::vector<int> state, int action);
 
 	bool firstStep;
+	bool newEpisode;
 
 	int stepInEpisode;
 	

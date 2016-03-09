@@ -151,7 +151,7 @@ void LearningController::setQvalue(std::vector<int> state, int action, double va
 }
 
 
-std::vector<int> LearningController::computeState(Engine::Point2D<int>& position, Engine::World* world, Engine::DynamicRaster& raster)
+std::vector<int> LearningController::computeState(Engine::Point2D<int>& position, Engine::World* world, Engine::DynamicRaster& resourceRaster, Engine::StaticRaster& obstacleRaster)
 {
 	std::vector<int> state;
 	unsigned int num_directions = MoveAction::DIRECTIONS.size();
@@ -159,10 +159,23 @@ std::vector<int> LearningController::computeState(Engine::Point2D<int>& position
 	for (unsigned int direction = 0 ; direction < num_directions ; direction ++ ) 
 	{
 		const Engine::Point2D<int> point = position + MoveAction::DIRECTIONS[direction];
-		if (world->checkPosition(point)) 
+		//if the point is within the world and not an obstacle give its energy value
+		if ((world->checkPosition(point)) && (obstacleRaster.getValue(point) <= 0)) 
 		{
-			int res = raster.getValue(point);
-			state.push_back(res);
+			int res = resourceRaster.getValue(point);
+			if(res > 5)
+			{
+				state.push_back(1);
+			}
+			else
+			{
+				state.push_back(0);
+			}
+		}
+		//otherwise just place a -1 for this point. Note: we assume that the energy will never be at -1
+		else
+		{
+			state.push_back(-1);
 		}
 	}
 	return state;
@@ -173,8 +186,9 @@ Engine::Action* LearningController::selectAction(ModelAgent& agent)
 	auto current = agent.getPosition();
 	Engine::World* world = agent.getWorld();
 	assert(world);
-	Engine::DynamicRaster raster = agent.getResourceRaster();
-	int reward = raster.getValue(current)-2;
+	Engine::DynamicRaster resourceRaster = agent.getResourceRaster();
+	Engine::StaticRaster obstacleRaster = agent.getObstacleRaster();
+	int reward = resourceRaster.getValue(current)-2;
 
 	/*
 	cpt ++;
@@ -185,7 +199,7 @@ Engine::Action* LearningController::selectAction(ModelAgent& agent)
 	}
 	*/
 
-	std::vector<int> state = computeState(current,world,raster);
+	std::vector<int> state = computeState(current,world,resourceRaster,obstacleRaster);
 
 	updateQValues(previousState,previousAction,reward,state);
 

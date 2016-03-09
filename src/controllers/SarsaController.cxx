@@ -168,14 +168,14 @@ Engine::Action* SarsaController::selectAction(ModelAgent& agent)
 	auto current = agent.getPosition();
 	Engine::World* world = agent.getWorld();
 	assert(world);
-	Engine::DynamicRaster raster = agent.getResourceRaster();
+	Engine::DynamicRaster resourceRaster = agent.getResourceRaster();
+	Engine::StaticRaster obstacleRaster = agent.getObstacleRaster();
 
 	stepInEpisode ++;
 	int action = 0;
 
-	//TODO do a new episode when we get a lot of energy !!!
 	//new episode
-	if((stepInEpisode > _config.episodeLength) or (firstStep == true))
+	if((stepInEpisode > _config.episodeLength) or (firstStep == true) or (newEpisode == true))
 	{
 		//show what the agent has learn
 		//dispQValues(world->getCurrentTimeStep());
@@ -184,23 +184,35 @@ Engine::Action* SarsaController::selectAction(ModelAgent& agent)
 		traces.clear();
 
 		//initialise state and action
-		previousState = computeState(current,world,raster);
+		previousState = computeState(current,world,resourceRaster,obstacleRaster);
 		previousAction = action;
 
 		if(stepInEpisode > _config.episodeLength)
 		{
+			agent.setRandomPosition();
 			stepInEpisode = 0;
 		}
 		if (firstStep == true)
 		{
 			firstStep = false;
 		}
+		if (newEpisode == true)
+		{
+			agent.setRandomPosition();
+			stepInEpisode = 0;
+			newEpisode = false;
+		}
 	}
 	else
 	{
 		//observe reward and new state
-		int reward = raster.getValue(current)-2;
-		std::vector<int> state = computeState(current,world,raster);
+		int reward = -1;
+		if (resourceRaster.getValue(current) > 5)
+		{
+			reward = 100;
+			newEpisode = true;
+		}
+		std::vector<int> state = computeState(current,world,resourceRaster,obstacleRaster);
 
 		//choose action following policy
 		action = chooseAction(state,_config.epsilon);

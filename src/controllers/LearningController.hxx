@@ -39,7 +39,7 @@ protected:
 	virtual void setQvalue(std::vector<int> state, int action, double value);
 	virtual void updateQValues(std::vector<int> previousState, int action, double reward, std::vector<int> state);
 
-	virtual std::vector<int> computeState(Engine::Point2D<int>& position, Engine::World* world, Engine::DynamicRaster& raster);
+	virtual std::vector<int> computeState(Engine::Point2D<int>& position, Engine::World* world, Engine::DynamicRaster& resourceRaster, Engine::StaticRaster& obstacleRaster);
 
 	void dispQValues(int timeStep);
 
