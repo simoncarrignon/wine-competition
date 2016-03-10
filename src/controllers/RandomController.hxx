@@ -14,11 +14,23 @@ namespace Model
  */
 class RandomController : public AgentController
 {
+protected:
+	bool newEpisode;
 public:
-	RandomController() {}
+	RandomController() {newEpisode = false;}
 	virtual ~RandomController() {}
 	
 	virtual Engine::Action* selectAction(ModelAgent& agent) {
+		if(newEpisode ==true)
+		{
+			agent.setRandomPosition();
+			newEpisode = false;
+		}
+		Engine::DynamicRaster resourceRaster = agent.getResourceRaster();
+		if (resourceRaster.getValue(agent.getPosition()) > 5)
+		{
+			newEpisode = true;
+		}
 		return MoveAction::createRandomAction(agent);
 	}
 	

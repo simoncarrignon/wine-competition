@@ -189,7 +189,7 @@ Engine::Action* SarsaController::selectAction(ModelAgent& agent)
 
 		if(stepInEpisode > _config.episodeLength)
 		{
-			agent.setRandomPosition();
+			//agent.setRandomPosition();
 			stepInEpisode = 0;
 		}
 		if (firstStep == true)
