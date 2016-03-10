@@ -3,8 +3,8 @@
 	<!-- Global simulation parameters -->
 	<output resultsFile="${output}" logsDir="${logs}"/>
 	<numSteps value="${timesteps}" serializeResolution="1"/>
-	<size width="50" height="50"/>
-    <environment map="${map}"/>
+	<size width="10" height="10"/>
+    <environment mapResource="${mapResource}" mapObstacle="${mapObstacle}"/>
 
     <resource consumptionFactor="${consumption_factor}" />
 
