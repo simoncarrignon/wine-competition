@@ -3,14 +3,21 @@
 #define __Evo_CONTROLLER_HXX__
 
 #include "AgentController.hxx"
+
+#include <cmaes.h>
+#include "OnlineCMAStrategy.hxx"
+
 #include <map>
 #include <vector>
 #include <Point2D.hxx>
 #include <World.hxx>
 #include <ModelAgent.hxx>
 
+
 namespace Model
 {
+
+using namespace libcmaes;
 
 //class EvoState; class EvoProblem; class ControllerConfig;
 
@@ -37,9 +44,14 @@ protected:
 	void computeOutputs();
 	Engine::Action* computeAction();
 
+	void evoStep(double reward);
+
 	std::vector<int> inputs;
 	std::vector<double> params;
 	int paramSize;
+
+  ESOptimizer<OnlineCMAStrategy,CMAParameters<>> optim;
+	int evaluationTime;
 
 	int step;
 	int hiddenLayerSize;

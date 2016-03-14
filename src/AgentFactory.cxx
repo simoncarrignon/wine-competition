@@ -58,6 +58,11 @@ ModelAgent* AgentFactory::createAgent(const std::string id, Environment* world, 
 		controller = std::make_shared<SarsaController>(config);
 		return new ModelAgent(id,world,controller);
 	}
+	else if (type == "evo") {
+		std::shared_ptr<AgentController> controller;
+		controller = std::make_shared<EvoController>(config);
+		return new ModelAgent(id,world,controller);
+	}
 	else {
 		return new ModelAgent(id, world, getController(type)); 
 	}

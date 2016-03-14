@@ -16,8 +16,8 @@
  *  
  */
 
-#ifndef PARAMETERS_H
-#define PARAMETERS_H
+#ifndef __PARAMETERS_H
+#define __PARAMETERS_H
 
 #include <limits>
 

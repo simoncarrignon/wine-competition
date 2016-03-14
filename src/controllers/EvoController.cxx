@@ -3,22 +3,54 @@
 #include <MoveAction.hxx>
 #include <math.h>
 
+#include <cmaes.h>
+#include "OnlineCMAStrategy.hxx"
+
+using namespace libcmaes;
+
+FitFunc computeFitness = [](const double *x, const int N)
+{
+	//sum up the fitnesses computed
+  double val = 0.0;
+  for (int i=0;i<N;i++)
+	{
+    val += x[i];
+	}
+
+	//turn the problem as a minimization
+	std::cout << "val " << val ; 
+	val = -log(val+1);
+	std::cout << " " << val << std::endl;
+  return val;
+};
+
 namespace Model
 {
 
 EvoController::EvoController(const ControllerConfig& config) 
 	: _config(config)
 	{
+		step = 0;
+
 		hiddenLayerSize = 5 ; //TODO load hidden layer size from configuration
 		realOrientation = 45.0; //TODO initialize randomly
-		rotationSpeed = 3.0; //TODO get it from configuration
+		rotationSpeed = 10.0; //TODO get it from configuration
 		realVelocity = 0.0;
 		paramSize = ((MoveAction::DIRECTIONS.size() + 1) * hiddenLayerSize ) + (hiddenLayerSize *2);
-		params.resize(paramSize,0.0);
-		for(int i = 45 ; i < paramSize ; i++)
-		{
-			params[i] = 1.0;
-		}
+
+		//evolution parameters
+		std::vector<double> x0(paramSize,0.1);
+		double sigma = 0.5;
+		evaluationTime = 100; //TODO get it from configuration
+
+		//initialize CMA-ES
+		CMAParameters<> cmaparams(x0,sigma);
+		cmaparams.set_uh(true);
+		optim = ESOptimizer<OnlineCMAStrategy,CMAParameters<>>(computeFitness,cmaparams);
+		optim.init(evaluationTime);
+
+		//initalize the parameters of the controller
+		params = optim.getParams();
 	}
 
 int EvoController::angleToDirection(double angle)
@@ -94,7 +126,7 @@ void EvoController::computeInputs(Engine::World* world, Engine::DynamicRaster ra
 		const Engine::Point2D<int> point = current + rotatedDirections[i];
 		if (world->checkPosition(point)) 
 		{
-			inputs.push_back(raster.getValue(current+rotatedDirections[i]));
+			inputs.push_back(raster.getValue(current+rotatedDirections[i])/10.0);
 		}
 		else
 		{
@@ -141,9 +173,8 @@ void EvoController::computeOutputs()
 	for(unsigned int i = 0; i < 2; i++)
 		outputs[i] = tanh(outputs[i]);
 
-
 	//use output to update orientation
-	realOrientation = realOrientation + outputs[0];
+	realOrientation = realOrientation + (outputs[0] * rotationSpeed);
 	//replace the orientation between 0 and 360.
 	//use fmod to have it with double
 	realOrientation = fmod(realOrientation,360);
@@ -169,13 +200,41 @@ Engine::Action* EvoController::computeAction()
 	return new MoveAction(0);
 }
 
+
+void EvoController::evoStep(double reward)
+{
+  if(!optim.stop())
+	{
+		//set the fitness
+		optim.setFitness(step, reward);
+
+		//if we have reach  the end of evaluation time, ask to CMA-ES to do its job
+		if((step % evaluationTime) == 0)
+		{
+			std::cout << "params " ;
+			for(unsigned int i = 0 ; i < params.size() ; i++)
+			{
+				std::cout << params[i] << " ";
+			}
+			std::cout << std::endl;
+			optim.completeEvaluation();
+		}
+	}
+	//get the parameters from CMA-ES
+	params = optim.getParams();
+}
+
 Engine::Action* EvoController::selectAction(ModelAgent& agent)
 {
+	step++;
+
 	auto current = agent.getPosition();
 	Engine::World* world = agent.getWorld();
 	assert(world);
 	Engine::DynamicRaster raster = agent.getResourceRaster();
-	int reward = raster.getValue(current)-2;
+	int reward = raster.getValue(current);
+	//std::cout << "reward " << reward << std::endl;
+	evoStep(reward);
 
 	computeInputs(world,raster,current);
 	computeOutputs();

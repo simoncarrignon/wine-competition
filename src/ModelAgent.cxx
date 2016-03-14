@@ -9,6 +9,7 @@
 
 #include "controllers/LearningController.hxx"
 #include "controllers/SarsaController.hxx"
+#include "controllers/EvoController.hxx"
 
 namespace Model
 {
@@ -81,6 +82,12 @@ void ModelAgent::reproduceAgent() {
 		std::shared_ptr<SarsaController> dadController = std::dynamic_pointer_cast<SarsaController>(getController());
 		std::shared_ptr<AgentController> childController;
 		childController = std::make_shared<SarsaController>(dadController->getConfig());
+		child = new ModelAgent(id, world, childController);
+	}
+	else if(getType() == "evo") {
+		std::shared_ptr<EvoController> dadController = std::dynamic_pointer_cast<EvoController>(getController());
+		std::shared_ptr<AgentController> childController;
+		childController = std::make_shared<EvoController>(dadController->getConfig());
 		child = new ModelAgent(id, world, childController);
 	}
 	else {
