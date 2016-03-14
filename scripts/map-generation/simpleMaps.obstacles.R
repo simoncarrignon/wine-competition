@@ -35,11 +35,13 @@ centeredMap <- function( fileNameResource, fileNameObstacle, size, rangeValues, 
 }
 
 # example
-proba = 0.1
-path = "../../maps/"
-fileNameResource = "map.tif"
-fileNameObstacle = paste("obstacle_p" , proba, ".tif",sep="")
-size = c(10,10)
-rangeValues = c(1,10)
+for (proba in seq(0.1,0.9,0.1))
+{
+	path = "../../maps/"
+	fileNameResource = "map.tif"
+	fileNameObstacle = paste("obstacle_p" , proba, ".tif",sep="")
+	size = c(50,50)
+	rangeValues = c(1,10)
 
-centeredMap(paste(path,fileNameResource,sep=""), paste(path,fileNameObstacle,sep=""), size, rangeValues, proba)
+	centeredMap(paste(path,fileNameResource,sep=""), paste(path,fileNameObstacle,sep=""), size, rangeValues, proba)
+}

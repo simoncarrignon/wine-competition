@@ -25,7 +25,7 @@ def do_experiment(agent_names, args):
     #map_instances = list(range(1, 6))  # 5 different map instances
     #consumptions = [2, 3, 4, 5]
 
-    autocorrelations = [1, 25]
+    autocorrelations = [10]
     map_instances = list(range(1, 6))  # 5 different map instances
     consumptions = [2, 3]
 
@@ -50,13 +50,15 @@ def do_experiment(agent_names, args):
 
         for autocorrelation, map_instance, consumption in itertools.product(autocorrelations, map_instances, consumptions):
 
-            map_filename = 'r' + str(autocorrelation) + '_i' + str(map_instance)
+            resource_filename = 'r' + str(autocorrelation) + '_i' + str(map_instance)
+            obstacle_filename = 'obstacle_p0'
 
             params = dict(timesteps=2000,
                           runs=runs,
                           agent_reproduction=True,
                           agent_position='',
-                          simulation_map=map_filename,
+                          resource_map=resource_filename,
+                          obstacle_map=obstacle_filename,
                           consumption=consumption,
                           agents=[agent])
 
@@ -86,7 +88,7 @@ def parse_arguments(timeout):
 
 def main():
     #do_experiment(['lazy', 'random', 'greedy','learning','sarsa'], parse_arguments(timeout=100))  # 100sec. are enough for the cheap agents
-    do_experiment(['lazy', 'random', 'greedy'], parse_arguments(timeout=100))  # 100sec. are enough for the cheap agents
+    do_experiment(['random', 'sarsa'], parse_arguments(timeout=100))  # 100sec. are enough for the cheap agents
     #do_experiment(['mdp'], parse_arguments(timeout=12*3600))  # We need much more time for the MDP agent
 
 
