@@ -17,7 +17,8 @@ CONTROLLER_CONFIG = dict(
     greedy='<controller type= "greedy" population="${population}" />',
     motionless='<controller type= "motionless" population="${population}"/>',
     learning='<controller type= "learning" population="${population}" alpha="${alpha}" epsilon="${epsilon}" gamma="${gamma}" episodeLength="${episodeLength}" />',
-    sarsa='<controller type= "sarsa" population="${population}" alpha="${alpha}" epsilon="${epsilon}" gamma="${gamma}" lambdaParam="${lambdaParam}" episodeLength="${episodeLength}" />'
+    sarsa='<controller type= "sarsa" population="${population}" alpha="${alpha}" epsilon="${epsilon}" gamma="${gamma}" lambdaParam="${lambdaParam}" episodeLength="${episodeLength}" />',
+    evo='<controller type= "evo" population="${population}" evaluationTime="${evaluationTime}" />'
 )
 
 
@@ -69,6 +70,14 @@ class SarsaConfiguration(AgentConfiguration):
 
     def get_type(self):
         return 'sarsa'
+
+class EvoConfiguration(AgentConfiguration):
+    def __init__(self, population, evaluationTime):
+        super(EvoConfiguration,self).__init__(population)
+        self.evaluationTime = evaluationTime
+
+    def get_type(self):
+        return 'evo'
 
 
 class RandomAgentConfiguration(AgentConfiguration):

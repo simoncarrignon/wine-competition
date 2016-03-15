@@ -9,6 +9,9 @@ from src.sge_taskgen import SGETaskgen
 from src.sequential_taskgen import SequentialTaskgen
 from src.parallel_taskgen import ParallelTaskgen
 
+autocorrelation = 10
+map_instance = 1
+proba = 1
 
 def main():
     """
@@ -16,14 +19,18 @@ def main():
     """
     exp = AggregateExperiment(parse_arguments())
 
-    for consumption in [3]:
+    for consumption in [2]:
         for alpha in [0.05,0.15,0.3] :
             for epsilon in [0.05,0.15,0.3]:
                 for gamma in [0.05,0.15,0.3]:
-                    for lambdaParam in [0.3,0.4]:
-                        for episodeLength in [200,500]:
+                    for lambdaParam in [0.05,0.15,0.3]:
+                        for episodeLength in [200]:
 
-                            agent = SarsaConfiguration(population=1, alpha = alpha, epsilon = epsilon, gamma = gamma, lambdaParam = lambdaParam, episodeLength = episodeLength )
+                            resource_filename = 'r' + str(autocorrelation) + '_i' + str(map_instance)
+                            adapt_proba = float(proba) / 10.0
+                            obstacle_filename = 'obstacle_p' + str(adapt_proba)
+
+                            agent = SarsaConfiguration(population=10, alpha = alpha, epsilon = epsilon, gamma = gamma, lambdaParam = lambdaParam, episodeLength = episodeLength )
 
                             label = make_filename(consumption=consumption,
                                                   alpha = alpha,
@@ -35,9 +42,10 @@ def main():
 
                             exp.add_single(SingleExperiment(timesteps=2000, 
                                                             consumption=consumption,
-                                                            agent_reproduction=1,
+                                                            agent_reproduction=0,
                                                             agent_position="",
-                                                            simulation_map='r1_i1',
+                                                            resource_map=resource_filename,
+                                                            obstacle_map=obstacle_filename,
                                                             label=label,
                                                             runs=10,
                                                             agents=[agent]))
