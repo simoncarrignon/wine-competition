@@ -24,7 +24,7 @@ output <- args[argIt]
 setEPS()
 postscript(output)
 #create an empty plot
-plot(0,ylim=c(0,50),xlim=c(0,2000))
+plot(0,ylim=c(0,4000),xlim=c(0,2000))
 labelLine = c()
 graphColors <- rainbow(nbAgentTypes)
 
