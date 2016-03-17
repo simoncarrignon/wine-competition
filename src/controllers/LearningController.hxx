@@ -51,6 +51,8 @@ public:
 	
 	virtual std::string getType() const { return "learning"; }
 	virtual ControllerConfig getConfig() const { return _config;} 
+
+	virtual int getQvalueSize() { return qValues.size();}
 	
 	virtual Engine::Action* selectAction(ModelAgent& agent);
 

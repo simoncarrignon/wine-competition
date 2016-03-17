@@ -21,6 +21,7 @@ public:
 	unsigned population;
 
 	double epsilon;
+	double epsilonDecreaseRate;
 	double gamma;
 	float alpha; // alpha parameter for the aplha-lazy controllers.
 							 // also used for the learning and sarsa algorithm

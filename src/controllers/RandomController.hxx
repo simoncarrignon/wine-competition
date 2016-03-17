@@ -16,15 +16,18 @@ class RandomController : public AgentController
 {
 protected:
 	bool newEpisode;
+	int step;
 public:
-	RandomController() {newEpisode = false;}
+	RandomController() {newEpisode = false;step=0;}
 	virtual ~RandomController() {}
 	
 	virtual Engine::Action* selectAction(ModelAgent& agent) {
-		if(newEpisode ==true)
+		step++;
+		if ((newEpisode ==true) or (step == 200))
 		{
 			agent.setRandomPosition();
 			newEpisode = false;
+			step = 0;
 		}
 		Engine::DynamicRaster resourceRaster = agent.getResourceRaster();
 		if (resourceRaster.getValue(agent.getPosition()) > 5)

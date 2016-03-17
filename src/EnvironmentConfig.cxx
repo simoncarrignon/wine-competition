@@ -91,6 +91,7 @@ void EnvironmentConfig::loadSingleControllerConfig(TiXmlElement* element) {
 	} else if (config.type == "sarsa") {
 		config.alpha = getParamFloatFromElem(element, "alpha");
 		config.epsilon = getParamFloatFromElem(element, "epsilon");
+		config.epsilonDecreaseRate = getParamFloatFromElem(element, "epsilonDecreaseRate");
 		config.gamma = getParamFloatFromElem(element, "gamma");
 		config.lambda = getParamFloatFromElem(element, "lambdaParam");
 		config.episodeLength = getParamFloatFromElem(element, "episodeLength");

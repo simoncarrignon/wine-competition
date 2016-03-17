@@ -11,6 +11,7 @@ SarsaController::SarsaController(const ControllerConfig& config)
 	{
 		traces.clear();
 		firstStep = true;
+		_epsilon = _config.epsilon;
 	}
 
 int SarsaController::chooseAction(std::vector<int> state)
@@ -174,6 +175,20 @@ Engine::Action* SarsaController::selectAction(ModelAgent& agent)
 	stepInEpisode ++;
 	int action = 0;
 
+	cpt ++;
+
+	/*
+	if((cpt % 10000 == 0) && (agent.getId() == "sarsa_1"))
+	{
+		std::cout << cpt << " #QValues: " << qValues.size() << std::endl;
+	}
+	if((cpt == (world->getConfig().getNumSteps() - 1)) && (agent.getId() == "sarsa_1"))
+	{
+		dispQValues(world->getCurrentTimeStep());
+		cpt = 0;
+	}
+	*/
+
 	//new episode
 	if((stepInEpisode > _config.episodeLength) or (firstStep == true) or (newEpisode == true))
 	{
@@ -201,21 +216,29 @@ Engine::Action* SarsaController::selectAction(ModelAgent& agent)
 			agent.setRandomPosition();
 			stepInEpisode = 0;
 			newEpisode = false;
+			_epsilon = _epsilon * _config.epsilonDecreaseRate;
 		}
 	}
 	else
 	{
 		//observe reward and new state
+		/*
 		int reward = -1;
 		if (resourceRaster.getValue(current) > 5)
 		{
 			reward = 100;
 			newEpisode = true;
 		}
+		*/
+		int reward = resourceRaster.getValue(current);
+		if (resourceRaster.getValue(current) > 5)
+		{
+			newEpisode = true;
+		}
 		std::vector<int> state = computeState(current,world,resourceRaster,obstacleRaster);
 
 		//choose action following policy
-		action = chooseAction(state,_config.epsilon);
+		action = chooseAction(state,_epsilon);
 
 		//update traces and q values
 		updateQValues(previousState,previousAction,reward,state,action);

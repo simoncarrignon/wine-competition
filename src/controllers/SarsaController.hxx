@@ -38,6 +38,8 @@ protected:
 	bool newEpisode;
 
 	int stepInEpisode;
+
+	double _epsilon;
 	
 public:
 	SarsaController(const ControllerConfig& config);

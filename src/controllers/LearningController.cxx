@@ -163,6 +163,7 @@ std::vector<int> LearningController::computeState(Engine::Point2D<int>& position
 		if ((world->checkPosition(point)) && (obstacleRaster.getValue(point) <= 0)) 
 		{
 			int res = resourceRaster.getValue(point);
+			/*
 			if(res > 5)
 			{
 				state.push_back(1);
@@ -171,6 +172,8 @@ std::vector<int> LearningController::computeState(Engine::Point2D<int>& position
 			{
 				state.push_back(0);
 			}
+			*/
+			state.push_back(res);
 		}
 		//otherwise just place a -1 for this point. Note: we assume that the energy will never be at -1
 		else

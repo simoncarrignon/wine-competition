@@ -133,11 +133,25 @@ int ModelAgent::collectResources(MDPRaster& resourceRaster, const Engine::Point2
 void ModelAgent::registerAttributes() {
 	registerIntAttribute("resources");
 	registerIntAttribute("numChildren");
+	if((getType() == "learning") || (getType() == "sarsa")) 
+	{
+		registerIntAttribute("qValues");
+	}
 }
 
 void ModelAgent::serialize() {
 	serializeAttribute("resources", _resources);
 	serializeAttribute("numChildren", _numChildren);
+	if(getType() == "learning") 
+	{
+		std::shared_ptr<LearningController> controller = std::dynamic_pointer_cast<LearningController>(getController());
+		serializeAttribute("qValues", controller->getQvalueSize());
+	}
+	else if (getType() == "sarsa")
+	{
+		std::shared_ptr<SarsaController> controller = std::dynamic_pointer_cast<SarsaController>(getController());
+		serializeAttribute("qValues", controller->getQvalueSize());
+	}	
 }
 
 

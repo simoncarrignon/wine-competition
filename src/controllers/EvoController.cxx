@@ -41,7 +41,7 @@ EvoController::EvoController(const ControllerConfig& config)
 		//evolution parameters
 		std::vector<double> x0(paramSize,0.1);
 		double sigma = 0.5;
-		evaluationTime = 100; //TODO get it from configuration
+		evaluationTime = 500; //TODO get it from configuration
 
 		//initialize CMA-ES
 		CMAParameters<> cmaparams(x0,sigma);
