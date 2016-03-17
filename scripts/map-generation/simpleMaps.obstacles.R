@@ -22,10 +22,13 @@ centeredMap <- function( fileNameResource, fileNameObstacle, size, rangeValues, 
 	{
 		for( j in seq(1,size[2]))
 		{
-			dice = runif(1,0,1)
-			if (dice < probaObstacle)
+			if ((i != centerX) && (j!= centerY))
 			{
-				obstacles[i,j] = 1
+				dice = runif(1,0,1)
+				if (dice < probaObstacle)
+				{
+					obstacles[i,j] = 1
+				}
 			}
 		}
 	}
@@ -35,13 +38,17 @@ centeredMap <- function( fileNameResource, fileNameObstacle, size, rangeValues, 
 }
 
 # example
-for (proba in seq(0.1,0.9,0.1))
+for (size in c(10,50))
 {
-	path = "../../maps/"
-	fileNameResource = "map.tif"
-	fileNameObstacle = paste("obstacle_p" , proba, ".tif",sep="")
-	size = c(50,50)
-	rangeValues = c(1,10)
+	for (proba in seq(0.0,0.9,0.1))
+	{
+		width=size
+		height=size
+		path = "../../maps/"
+		fileNameResource = paste("resourceCenter_s",width,"x",height,".tif",sep="")
+		fileNameObstacle = paste("obstacle_p" , proba, "_s", width , "x", height, ".tif",sep="")
 
-	centeredMap(paste(path,fileNameResource,sep=""), paste(path,fileNameObstacle,sep=""), size, rangeValues, proba)
+		rangeValues = c(1,10)
+		centeredMap(paste(path,fileNameResource,sep=""), paste(path,fileNameObstacle,sep=""), c(width,height), rangeValues, proba)
+	}
 }
