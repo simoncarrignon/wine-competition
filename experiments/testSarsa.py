@@ -20,35 +20,33 @@ def main():
     exp = AggregateExperiment(parse_arguments())
 
     for consumption in [2]:
-        for alpha in [0.05,0.15,0.3] :
-            for epsilon in [0.05,0.15,0.3]:
-                for gamma in [0.05,0.15,0.3]:
-                    for lambdaParam in [0.05,0.15,0.3]:
-                        for episodeLength in [200]:
+        for alpha in [0.15] :
+            for epsilonDecreaseRate in [1.0]:
+                for epsilon in [0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9]:
+                    for gamma in [0.15]:
+                        for lambdaParam in [0.15]:
+                            for episodeLength in [200]:
 
-                            resource_filename = 'r' + str(autocorrelation) + '_i' + str(map_instance)
-                            adapt_proba = float(proba) / 10.0
-                            obstacle_filename = 'obstacle_p' + str(adapt_proba)
+                                resource_filename = 'r' + str(autocorrelation) + '_i' + str(map_instance)
+                                adapt_proba = float(proba) / 10.0
+                                obstacle_filename = 'obstacle_p' + str(adapt_proba)
 
-                            agent = SarsaConfiguration(population=10, alpha = alpha, epsilon = epsilon, gamma = gamma, lambdaParam = lambdaParam, episodeLength = episodeLength )
+                                agent = SarsaConfiguration(population=1, alpha = alpha, epsilon = epsilon, epsilonDecreaseRate = epsilonDecreaseRate, gamma = gamma, lambdaParam = lambdaParam, episodeLength = episodeLength )
 
-                            label = make_filename(consumption=consumption,
-                                                  alpha = alpha,
-                                                  epsilon = epsilon,
-                                                  gamma = gamma,
-                                                  lambdaParam = lambdaParam,
-                                                  episodeLength = episodeLength,
-                                                  agent="sarsa")
+                                label = make_filename(
+                                                      epsilon = epsilon,
+                                                      epsilonDecreaseRate = epsilonDecreaseRate,
+                                                      agent="sarsa")
 
-                            exp.add_single(SingleExperiment(timesteps=2000, 
-                                                            consumption=consumption,
-                                                            agent_reproduction=0,
-                                                            agent_position="",
-                                                            resource_map=resource_filename,
-                                                            obstacle_map=obstacle_filename,
-                                                            label=label,
-                                                            runs=10,
-                                                            agents=[agent]))
+                                exp.add_single(SingleExperiment(timesteps=500000, 
+                                                                consumption=consumption,
+                                                                agent_reproduction=0,
+                                                                agent_position="",
+                                                                resource_map=resource_filename,
+                                                                obstacle_map=obstacle_filename,
+                                                                label=label,
+                                                                runs=10,
+                                                                agents=[agent]))
 
 
     exp.bootstrap()

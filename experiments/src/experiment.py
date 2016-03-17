@@ -17,7 +17,7 @@ CONTROLLER_CONFIG = dict(
     greedy='<controller type= "greedy" population="${population}" />',
     motionless='<controller type= "motionless" population="${population}"/>',
     learning='<controller type= "learning" population="${population}" alpha="${alpha}" epsilon="${epsilon}" gamma="${gamma}" episodeLength="${episodeLength}" />',
-    sarsa='<controller type= "sarsa" population="${population}" alpha="${alpha}" epsilon="${epsilon}" gamma="${gamma}" lambdaParam="${lambdaParam}" episodeLength="${episodeLength}" />',
+    sarsa='<controller type= "sarsa" population="${population}" alpha="${alpha}" epsilon="${epsilon}" epsilonDecreaseRate="{epsilonDecreaseRate}" gamma="${gamma}" lambdaParam="${lambdaParam}" episodeLength="${episodeLength}" />',
     evo='<controller type= "evo" population="${population}" evaluationTime="${evaluationTime}" />'
 )
 
@@ -60,9 +60,10 @@ class LearningConfiguration(AgentConfiguration):
         return 'learning'
 
 class SarsaConfiguration(AgentConfiguration):
-    def __init__(self, population, alpha, epsilon, gamma, lambdaParam, episodeLength):
+    def __init__(self, population, alpha, epsilon, epsilonDecreaseRate, gamma, lambdaParam, episodeLength):
         super(SarsaConfiguration,self).__init__(population)
         self.epsilon = epsilon
+        self.epsilonDecreaseRate = epsilonDecreaseRate
         self.alpha = alpha
         self.gamma = gamma
         self.lambdaParam = lambdaParam
@@ -174,7 +175,7 @@ class AggregateExperiment(object):
         #self.timeout = args.timeout
         #self.mem = args.mem
         #self.name = '.'.join([args.name, str(args.timeout) + 'sec', '{}GB'.format(args.mem), self.timestamp])
-        self.name = '.'.join([args.name, self.timestamp])
+        self.name = '.'.join([self.timestamp, args.name])
         self.directory = RESULTS_DIR + '/' + self.name
         self.singles = []
 
