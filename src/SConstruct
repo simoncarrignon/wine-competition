@@ -26,7 +26,8 @@ env.Append( BUILDERS = {'GenerateMPICode' : generateMPICodeBuilder})
 # Flags common to all environments:
 env.Append(LINKFLAGS = '-fopenmp')
 env.Append(CCFLAGS = ['-DTIXML_USE_STL', '-Wall', '-pedantic', '-std=c++0x' ])
-env.Append(CPPPATH = ['.', '../libs/mdp-engine', pandora_path + '/include', '/usr/local/include/libcmaes','/usr/include/eigen3'])
+env.Append(CPPPATH = ['.', '../libs/mdp-engine', pandora_path + '/include', '/usr/include/eigen3'])
+#env.Append(CPPPATH = ['.', '../libs/mdp-engine', pandora_path + '/include', '/usr/local/include/libcmaes','/usr/include/eigen3'])
 env.Append(LIBPATH = [pandora_path + '/lib'])
 env.Append(LIBS = ['tinyxml'])
 
@@ -35,10 +36,12 @@ if env['debug']:
     env.Append( CCFLAGS = ['-g', '-O0', '-DPANDORADEBUG'] )
     if env['edebug']:
         env.Append(CCFLAGS = '-DPANDORAEDEBUG')
-    env.Append(LIBS = ['pandora', 'cmaes'])
+    env.Append(LIBS = ['pandora'])
+    #env.Append(LIBS = ['pandora', 'cmaes'])
 else:
     env.Append( CCFLAGS = ['-O3', '-DNDEBUG'] )
-    env.Append(LIBS = ['pandora', 'cmaes'])
+    env.Append(LIBS = ['pandora'])
+    #env.Append(LIBS = ['pandora', 'cmaes'])
 
 
 # add the list of mpi code that must be generated & compiled

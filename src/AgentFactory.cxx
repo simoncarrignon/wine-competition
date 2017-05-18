@@ -12,7 +12,7 @@
 #include "controllers/RandomController.hxx"
 #include "controllers/LearningController.hxx"
 #include "controllers/SarsaController.hxx"
-#include "controllers/EvoController.hxx"
+//#include "controllers/EvoController.hxx"
 #include <Environment.hxx>
 #include <memory>
 
@@ -37,11 +37,11 @@ ModelAgent* AgentFactory::createAgent(unsigned id, Environment* world, const std
 		controller = std::make_shared<SarsaController>(config);
 		return new ModelAgent(id,world,controller);
 	}
-	else if (type == "evo") {
-		std::shared_ptr<AgentController> controller;
-		controller = std::make_shared<EvoController>(config);
-		return new ModelAgent(id,world,controller);
-	}
+	//else if (type == "evo") {
+	//	std::shared_ptr<AgentController> controller;
+	//	controller = std::make_shared<EvoController>(config);
+	//	return new ModelAgent(id,world,controller);
+	//}
 	else {
 		return new ModelAgent(id, world, getController(type)); 
 	}
@@ -58,11 +58,11 @@ ModelAgent* AgentFactory::createAgent(const std::string id, Environment* world, 
 		controller = std::make_shared<SarsaController>(config);
 		return new ModelAgent(id,world,controller);
 	}
-	else if (type == "evo") {
-		std::shared_ptr<AgentController> controller;
-		controller = std::make_shared<EvoController>(config);
-		return new ModelAgent(id,world,controller);
-	}
+	//else if (type == "evo") {
+	//	std::shared_ptr<AgentController> controller;
+	//	controller = std::make_shared<EvoController>(config);
+	//	return new ModelAgent(id,world,controller);
+	//}
 	else {
 		return new ModelAgent(id, world, getController(type)); 
 	}
@@ -90,7 +90,8 @@ void AgentFactory::createController(const ControllerConfig& config) {
 	} else if (type == "sarsa") {
 		controller = std::make_shared<SarsaController>(config); //registered for compatibility issue but not used
 	} else if (type == "evo") {
-		controller = std::make_shared<EvoController>(config); //registered for compatibility issue but not used
+	    bool a = 0;
+	//	controller = std::make_shared<EvoController>(config); //registered for compatibility issue but not used
  	} else {
  		throw Engine::Exception("Unknown controller type"); // Should never get here!
  	}
